@@ -72,11 +72,11 @@
   (weblocks/html:with-html
     (:style
      "
-.directories {
+.file-server-body {
     margin-left: 100px;
     margin-right: 100px;
 }
-.directories .children {
+.file-server-body ul.children {
     padding-left: 1em;
     list-style-position: inside;
 }
@@ -93,7 +93,7 @@
     (weblocks/html:with-html-string
       (render-styles route)
       
-      (:div :class "directories"
+      (:div :class "file-server-body"
             (:h1 :class "current-directory"
                  (princ-to-string uri))
             (:ul :class "children"
@@ -119,9 +119,11 @@
 
 (defmethod render-404 ((route t) uri)
   (weblocks/html:with-html-string
-    (:h1 :class "file-not-found"
-         (format nil "File \"~A\" not found!"
-                 uri))))
+    (render-styles route)
+    (:div :class "file-server-body"
+          (:h1 :class "file-not-found"
+               (format nil "File \"~A\" not found!"
+                       uri)))))
 
 
 (defmethod serve-file ((route t) full-path)
