@@ -13,6 +13,7 @@
            #:serve-directory
            #:render-directory
            #:render-404
+           #:render-styles
            #:list-directory))
 (in-package weblocks-file-server/core)
 
@@ -55,12 +56,32 @@
   (:documentation "Returns a string with HTML for a case when `uri' wasn't found on the disk."))
 
 
+(defgeneric render-styles (route)
+  (:documentation "This method should use weblocks/html:with-html and output a :style element."))
+
+
 (defun list-directory (full-path)
   "Returns a list of files in the directory.
    All items of the list are relative."
   (loop for file in (cl-fad:list-directory full-path)
         for relative-file = (weblocks/utils/misc:relative-path file full-path)
         collect relative-file))
+
+
+(defmethod render-styles ((route t))
+  (weblocks/html:with-html
+    (:style
+     "
+.directories {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+.directories .children {
+    padding-left: 1em;
+    list-style-position: inside;
+}
+"
+     )))
 
 
 (defmethod render-directory ((route t) uri children)
@@ -70,19 +91,21 @@
                           (princ-to-string route-root))
              (cl-fad:pathname-parent-directory uri))))
     (weblocks/html:with-html-string
+      (render-styles route)
+      
       (:div :class "directories"
             (:h1 :class "current-directory"
                  (princ-to-string uri))
-            (:ul
-             (when parent-directory-uri
-               (:li :class "parent-directory"
-                    (:a :href parent-directory-uri
-                        "..")))
-             (loop for relative-file in children
-                   for file-uri = (merge-pathnames relative-file uri)
-                   do (:li :class "file-or-directory"
-                           (:a :href (princ-to-string file-uri)
-                               relative-file))))))))
+            (:ul :class "children"
+                 (when parent-directory-uri
+                   (:li :class "parent-directory"
+                        (:a :href parent-directory-uri
+                            "..")))
+                 (loop for relative-file in children
+                       for file-uri = (merge-pathnames relative-file uri)
+                       do (:li :class "file-or-directory"
+                               (:a :href (princ-to-string file-uri)
+                                   relative-file))))))))
 
 
 (defmethod serve-directory ((route t) uri full-path)
