@@ -86,6 +86,8 @@
 
 
 (defmethod serve-directory ((route t) uri full-path)
+  (log:info "Serving directory" full-path)
+  
   (let ((children (list-directory full-path)))
     (list 200
           (list :content-type "text/html")
@@ -136,11 +138,17 @@
   (restart-case
       (let* ((uri (weblocks/request:get-path))
              ;; A path to the file on the hard drive
-             (full-path (make-full-path (get-root route)
-                                        (get-uri route)
-                                        uri))
-             (is-directory (cl-fad:directory-pathname-p full-path))
-             (not-exists-p (not (cl-fad:file-exists-p full-path))))
+             (original-full-path (make-full-path (get-root route)
+                                                 (get-uri route)
+                                                 uri))
+             ;; Here cl-fad will add a missing / if
+             ;; full-path is pointing to a directory but
+             ;; does not contains / on the end
+             (full-path (cl-fad:file-exists-p original-full-path))
+             (is-directory (when full-path
+                             (cl-fad:directory-pathname-p full-path)))
+             (not-exists-p (null full-path)))
+
         (cond (not-exists-p
                (list 404
                      (list :content-type "text/html")
