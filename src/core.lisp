@@ -9,8 +9,10 @@
                 #:parse-template)
   (:export #:make-route
            #:static-files-route
-           #:render-directory
            #:serve-file
+           #:serve-directory
+           #:render-directory
+           #:render-404
            #:list-directory))
 (in-package weblocks-file-server/core)
 
@@ -37,12 +39,20 @@
     (values route)))
 
 
-(defgeneric render-directory (route path full-path)
-  (:documentation "Renders a list of files in a directory"))
+(defgeneric serve-directory (route uri full-path)
+  (:documentation "Returns a Lack response with a rendered directory listing."))
 
 
 (defgeneric serve-file (route full-path)
   (:documentation "Returns content of the file."))
+
+
+(defgeneric render-directory (route uri children)
+  (:documentation "Renders a list of files in a directory"))
+
+
+(defgeneric render-404 (route uri)
+  (:documentation "Returns a string with HTML for a case when `uri' wasn't found on the disk."))
 
 
 (defun list-directory (full-path)
@@ -53,44 +63,48 @@
         collect relative-file))
 
 
-(defmethod render-directory ((route t) path childrens)
+(defmethod render-directory ((route t) uri children)
   (let* ((route-root (get-uri route))
          (parent-directory-uri
-           (unless (equal path
+           (unless (equal uri
                           (princ-to-string route-root))
-             (cl-fad:pathname-parent-directory path)))
-         
-         (html (weblocks/html:with-html-string
-                 (:div :class "directories"
-                       (:h1 :class "current-directory"
-                            (princ-to-string path))
-                       (:ul
-                        (when parent-directory-uri
-                          (:li :class "parent-directory"
-                               (:a :href parent-directory-uri
-                                   "..")))
-                        (loop for relative-file in childrens
-                              for uri = (merge-pathnames relative-file path)
-                              do (:li :class "file-or-directory"
-                                      (:a :href (princ-to-string uri)
-                                          relative-file))))))))
+             (cl-fad:pathname-parent-directory uri))))
+    (weblocks/html:with-html-string
+      (:div :class "directories"
+            (:h1 :class "current-directory"
+                 (princ-to-string uri))
+            (:ul
+             (when parent-directory-uri
+               (:li :class "parent-directory"
+                    (:a :href parent-directory-uri
+                        "..")))
+             (loop for relative-file in children
+                   for file-uri = (merge-pathnames relative-file uri)
+                   do (:li :class "file-or-directory"
+                           (:a :href (princ-to-string file-uri)
+                               relative-file))))))))
+
+
+(defmethod serve-directory ((route t) uri full-path)
+  (let ((children (list-directory full-path)))
     (list 200
           (list :content-type "text/html")
-          (list html))))
+          (list (render-directory route uri children)))))
+
+
+(defmethod render-404 ((route t) uri)
+  (weblocks/html:with-html-string
+    (:h1 :class "file-not-found"
+         (format nil "File \"~A\" not found!"
+                 uri))))
 
 
 (defmethod serve-file ((route t) full-path)
   (log:info "Serving file" full-path)
   
-  (if (truename full-path)
-      (list 200
-            (list :content-type "application/binary")
-            full-path)
-      (list 404
-            (list :content-type "application/binary")
-            (list (weblocks/html:with-html
-                    (:h1 :class "file-not-found"
-                         "File not found!"))))))
+  (list 200
+        (list :content-type "application/binary")
+        full-path))
 
 
 (defun make-full-path (root route-uri request-path)
@@ -120,16 +134,23 @@
   (declare (ignorable env))
   
   (restart-case
-      (let* ((path (weblocks/request:get-path))
+      (let* ((uri (weblocks/request:get-path))
+             ;; A path to the file on the hard drive
              (full-path (make-full-path (get-root route)
                                         (get-uri route)
-                                        path))
-             (is-directory (cl-fad:directory-pathname-p full-path)))
-        (if is-directory
-            (render-directory route
-                              path
-                              (list-directory full-path))
-            (serve-file route full-path)))
+                                        uri))
+             (is-directory (cl-fad:directory-pathname-p full-path))
+             (not-exists-p (not (cl-fad:file-exists-p full-path))))
+        (cond (not-exists-p
+               (list 404
+                     (list :content-type "text/html")
+                     (list (render-404 route uri))))
+              (is-directory
+               (serve-directory route
+                                uri
+                                full-path))
+              (t
+               (serve-file route full-path))))
     (abort ()
       :report "Ignore error and return HTTP 500"
       (log:error "Unhandled error")
