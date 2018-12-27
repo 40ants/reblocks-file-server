@@ -3,7 +3,8 @@
   (:use #:cl)
   (:import-from #:weblocks/routes
                 #:route
-                #:add-route)
+                #:add-route
+                #:serve)
   (:import-from #:routes
                 #:parse-template)
   (:export #:make-route
