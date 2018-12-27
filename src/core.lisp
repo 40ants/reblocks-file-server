@@ -1,6 +1,7 @@
 (defpackage #:weblocks-file-server/core
   (:nicknames #:weblocks-file-server)
   (:use #:cl)
+  (:import-from #:trivial-mimes)
   (:import-from #:weblocks/routes
                 #:route
                 #:add-route
@@ -129,9 +130,10 @@
 (defmethod serve-file ((route t) full-path)
   (log:info "Serving file" full-path)
   
-  (list 200
-        (list :content-type "application/binary")
-        full-path))
+  (let ((content-type (trivial-mimes:mime full-path)))
+    (list 200
+          (list :content-type content-type)
+          full-path)))
 
 
 (defun make-full-path (root route-uri request-path)
