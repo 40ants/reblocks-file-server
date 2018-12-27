@@ -1,8 +1,16 @@
 (defpackage #:weblocks-file-server/core
-   (:nicknames #:weblocks-file-server)
-   (:use #:cl)
-   (:export #:foo
-            #:bar))
+  (:nicknames #:weblocks-file-server)
+  (:use #:cl)
+  (:import-from #:weblocks/routes
+                #:route
+                #:add-route)
+  (:import-from #:routes
+                #:parse-template)
+  (:export #:make-route
+           #:static-files-route
+           #:render-directory
+           #:serve-file
+           #:list-directory))
 (in-package weblocks-file-server/core)
 
 
@@ -71,9 +79,17 @@
 
 
 (defmethod serve-file ((route t) full-path)
-  (list 200
-        (list :content-type "application/binary")
-        full-path))
+  (log:info "Serving file" full-path)
+  
+  (if (truename full-path)
+      (list 200
+            (list :content-type "application/binary")
+            full-path)
+      (list 404
+            (list :content-type "application/binary")
+            (list (weblocks/html:with-html
+                    (:h1 :class "file-not-found"
+                         "File not found!"))))))
 
 
 (defun make-full-path (root route-uri request-path)
