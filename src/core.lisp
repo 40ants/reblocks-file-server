@@ -30,13 +30,16 @@
 
 (defun make-route (&key
                      (route-class 'static-files-route)
-                     (uri "/dist/")
-                     (root "./build/dist/"))
-  (log:info "Making a route for a serving an Ultralisp distribution in DEV environment.")
-  (let ((route (make-instance route-class
-                              :uri (pathname uri)
-                              :template (parse-template (concatenate 'string uri "*"))
-                              :root (uiop:truename* root))))
+                     (uri "/")
+                     (root "./"))
+  (log:info "Making a route for serving files from a directory" root)
+  (let* ((real-root (uiop:truename* root))
+         (route (make-instance route-class
+                               :uri (pathname uri)
+                               :template (parse-template (concatenate 'string uri "*"))
+                               :root (or real-root
+                                         (error "Directory ~S does not exist."
+                                                root)))))
     (add-route route)
     (values route)))
 
