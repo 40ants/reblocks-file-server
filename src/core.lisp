@@ -2,6 +2,7 @@
   (:nicknames #:weblocks-file-server)
   (:use #:cl)
   (:import-from #:trivial-mimes)
+  (:import-from #:weblocks/request)
   (:import-from #:weblocks/html
                 #:with-html
                 #:with-html-string)
