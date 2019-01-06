@@ -2,6 +2,9 @@
   (:nicknames #:weblocks-file-server)
   (:use #:cl)
   (:import-from #:trivial-mimes)
+  (:import-from #:weblocks/html
+                #:with-html
+                #:with-html-string)
   (:import-from #:weblocks/utils/misc
                 #:relative-path)
   (:import-from #:weblocks/routes
@@ -75,7 +78,7 @@
 
 
 (defmethod render-styles ((route t))
-  (weblocks/html:with-html
+  (with-html
     (:style
      "
 .file-server-body {
@@ -96,7 +99,7 @@
            (unless (equal uri
                           (princ-to-string route-root))
              (cl-fad:pathname-parent-directory uri))))
-    (weblocks/html:with-html-string
+    (with-html-string
       (render-styles route)
       
       (:div :class "file-server-body"
@@ -124,7 +127,7 @@
 
 
 (defmethod render-404 ((route t) uri)
-  (weblocks/html:with-html-string
+  (with-html-string
     (render-styles route)
     (:div :class "file-server-body"
           (:h1 :class "file-not-found"
