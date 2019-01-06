@@ -2,6 +2,8 @@
   (:nicknames #:weblocks-file-server)
   (:use #:cl)
   (:import-from #:trivial-mimes)
+  (:import-from #:weblocks/utils/misc
+                #:relative-path)
   (:import-from #:weblocks/routes
                 #:route
                 #:add-route
@@ -68,7 +70,7 @@
   "Returns a list of files in the directory.
    All items of the list are relative."
   (loop for file in (cl-fad:list-directory full-path)
-        for relative-file = (weblocks/utils/misc:relative-path file full-path)
+        for relative-file = (relative-path file full-path)
         collect relative-file))
 
 
@@ -156,7 +158,7 @@
    Then this function should return a pathname
    pointing to \"/app/build/dist/the-file.txt\""
 
-  (let* ((relative (weblocks/utils/misc:relative-path request-path route-uri))
+  (let* ((relative (relative-path request-path route-uri))
          (new-path (merge-pathnames relative root)))
     new-path))
 
