@@ -14,6 +14,7 @@
                 #:serve)
   (:import-from #:routes
                 #:parse-template)
+  (:import-from #:cl-ppcre)
   (:export #:make-route
            #:static-files-route
            #:serve-file
@@ -31,13 +32,26 @@
          :reader get-root)
    (uri :type pathname
         :initarg :uri
-        :reader get-uri)))
-
+        :reader get-uri)
+   (dir-listing :type t ; when nil, directory contents is not shown
+	      :initform t
+	      :initarg :dir-listing
+	      :reader get-dir-listing)
+   (filter :type string ; regular expression
+           :initarg :filter
+	   :reader get-filter)
+   (filter-type :type t     ; t means show files that match the filter regexp
+		:initform t ; nil means hide files that match the filter regexp
+		:initarg :filter-type ; UPDATE: regexps can contain negation so filter-type is not really needed... Too lazy to remove it now.
+		:reader get-filter-type)))
 
 (defun make-route (&key
                      (route-class 'static-files-route)
                      (uri "/")
-                     (root "./"))
+                     (root "./")
+		     (dir-listing t)
+		     (filter ".*")
+		     (filter-type t))
   (log:info "Making a route for serving files from a directory" root)
   (let* ((real-root (uiop:truename* root))
          (route (make-instance route-class
@@ -45,7 +59,10 @@
                                :template (parse-template (concatenate 'string uri "*"))
                                :root (or real-root
                                          (error "Directory ~S does not exist."
-                                                root)))))
+                                                root))
+	                       :dir-listing dir-listing
+			       :filter filter
+			       :filter-type filter-type)))
     (add-route route)
     (values route)))
 
@@ -70,11 +87,15 @@
   (:documentation "This method should use weblocks/html:with-html and output a :style element."))
 
 
-(defun list-directory (full-path)
+(defun list-directory (full-path filter filter-type)
   "Returns a list of files in the directory.
    All items of the list are relative."
   (loop for file in (cl-fad:list-directory full-path)
         for relative-file = (relative-path file full-path)
+	for filtered-p = (ppcre:scan filter (namestring file))
+	if (or (and filtered-p filter-type)
+               (and (null filtered-p)
+		    (null filter-type)))
         collect relative-file))
 
 
@@ -121,7 +142,7 @@
 (defmethod serve-directory ((route t) uri full-path)
   (log:info "Serving directory" full-path)
   
-  (let ((children (list-directory full-path)))
+  (let ((children (list-directory full-path (get-filter route) (get-filter-type route))))
     (list 200
           (list :content-type "text/html")
           (list (render-directory route uri children)))))
@@ -173,6 +194,8 @@
   
   (restart-case
       (let* ((uri (weblocks/request:get-path))
+	     (dir-listing (get-dir-listing route))
+	     (filter-type (get-filter-type route))
              ;; A path to the file on the hard drive
              (original-full-path (make-full-path (get-root route)
                                                  (get-uri route)
@@ -183,10 +206,19 @@
              (full-path (cl-fad:file-exists-p original-full-path))
              (is-directory (when full-path
                              (cl-fad:directory-pathname-p full-path)))
-             (not-exists-p (null full-path)))
+             (not-exists-p (null full-path))
+	     filtered-p)
 
-        (cond (not-exists-p
-               (list 404
+	(when full-path
+	  (setf filtered-p (ppcre:scan (get-filter route) (namestring full-path))))
+
+	(cond ((or not-exists-p
+		   (and is-directory (null dir-listing))
+		   (and (not is-directory)
+			(not (or (and filtered-p filter-type)
+			    (and (null filtered-p)
+				 (null filter-type))))))
+	       (list 404
                      (list :content-type "text/html")
                      (list (render-404 route uri))))
               (is-directory
@@ -203,3 +235,14 @@
             (list :content-type "text/html")
             ;; Use method to render an Error page
             (list "Unhandled error")))))
+
+#|
+example:
+(weblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing nil :filter ".*.txt")
+; now access 127.0.0.1/static/1.txt
+(weblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing t :filter ".*.gif")
+; now access 127.0.0.1/static/2.gif
+  and 127.0.0.1/static/
+; in this example, we display and give access to all files except for .txt :
+(weblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing t :filter ".*.txt" :filter-type nil)
+|#
