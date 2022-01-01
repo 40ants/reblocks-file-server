@@ -2,6 +2,11 @@
  ChangeLog
 ===========
 
+0.2.0 (2021-12-06)
+==================
+
+* Renamed to reblocks-file-server.
+
 0.1.0 (unreleased)
 ==================
 

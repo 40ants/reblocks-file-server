@@ -1,14 +1,14 @@
-(defpackage #:weblocks-file-server/core
-  (:nicknames #:weblocks-file-server)
+(defpackage #:reblocks-file-server/core
+  (:nicknames #:reblocks-file-server)
   (:use #:cl)
   (:import-from #:trivial-mimes)
-  (:import-from #:weblocks/request)
-  (:import-from #:weblocks/html
+  (:import-from #:reblocks/request)
+  (:import-from #:reblocks/html
                 #:with-html
                 #:with-html-string)
-  (:import-from #:weblocks/utils/misc
+  (:import-from #:reblocks/utils/misc
                 #:relative-path)
-  (:import-from #:weblocks/routes
+  (:import-from #:reblocks/routes
                 #:route
                 #:add-route
                 #:serve)
@@ -23,7 +23,7 @@
            #:render-404
            #:render-styles
            #:list-directory))
-(in-package weblocks-file-server/core)
+(in-package reblocks-file-server/core)
 
 
 (defclass static-files-route (route)
@@ -84,7 +84,7 @@
 
 
 (defgeneric render-styles (route)
-  (:documentation "This method should use weblocks/html:with-html and output a :style element."))
+  (:documentation "This method should use reblocks/html:with-html and output a :style element."))
 
 
 (defun list-directory (full-path filter filter-type)
@@ -193,7 +193,7 @@
   (declare (ignorable env))
   
   (restart-case
-      (let* ((uri (weblocks/request:get-path))
+      (let* ((uri (reblocks/request:get-path))
 	     (dir-listing (get-dir-listing route))
 	     (filter-type (get-filter-type route))
              ;; A path to the file on the hard drive
@@ -216,8 +216,9 @@
 		   (and is-directory (null dir-listing))
 		   (and (not is-directory)
 			(not (or (and filtered-p filter-type)
-			    (and (null filtered-p)
-				 (null filter-type))))))
+			         (and (null filtered-p)
+				      (null filter-type))))))
+               (log:warn "File not found: ~A" uri)
 	       (list 404
                      (list :content-type "text/html")
                      (list (render-404 route uri))))
@@ -238,11 +239,11 @@
 
 #|
 example:
-(weblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing nil :filter ".*.txt")
+(reblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing nil :filter ".*.txt")
 ; now access 127.0.0.1/static/1.txt
-(weblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing t :filter ".*.gif")
+(reblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing t :filter ".*.gif")
 ; now access 127.0.0.1/static/2.gif
   and 127.0.0.1/static/
 ; in this example, we display and give access to all files except for .txt :
-(weblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing t :filter ".*.txt" :filter-type nil)
+(reblocks-file-server:make-route :uri "/static/" :root "/tmp/" :dir-listing t :filter ".*.txt" :filter-type nil)
 |#

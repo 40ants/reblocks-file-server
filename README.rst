@@ -1,11 +1,11 @@
 ======================
- weblocks-file-server
+ reblocks-file-server
 ======================
 
 .. insert-your badges like that:
 
-.. image:: https://travis-ci.org/40ants/weblocks-file-server.svg?branch=master
-    :target: https://travis-ci.org/40ants/weblocks-file-server
+.. image:: https://travis-ci.org/40ants/reblocks-file-server.svg?branch=master
+    :target: https://travis-ci.org/40ants/reblocks-file-server
 
 .. Everything starting from this commit will be inserted into the
    index page of the HTML documentation.
@@ -19,7 +19,7 @@ Reasoning
 
 If you are working on a small project which does not require a CDN
 to serve it's static files, then probably you want to use this
-Weblocks extension.
+Reblocks extension.
 
 It let you to define a root on a file system and provide a way to
 browse it via the web.
@@ -31,7 +31,7 @@ TODO: make a screen shoot of the default view.
 
 To create a page with a file browser, add such code
 somewhere in your code somewhere after the call to
-the ``weblocks/server:start``:
+the ``reblocks/server:start``:
 
 TODO: continue a tutorial...
 
