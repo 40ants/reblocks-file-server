@@ -22,7 +22,12 @@
            #:render-directory
            #:render-404
            #:render-styles
-           #:list-directory))
+           #:list-directory
+           #:get-dir-listing
+           #:get-filter
+           #:get-filter-type
+           #:get-root
+           #:get-uri))
 (in-package reblocks-file-server/core)
 
 
@@ -33,16 +38,20 @@
    (uri :type pathname
         :initarg :uri
         :reader get-uri)
-   (dir-listing :type t ; when nil, directory contents is not shown
-	      :initform t
-	      :initarg :dir-listing
-	      :reader get-dir-listing)
-   (filter :type string ; regular expression
+   (dir-listing :type t
+                :initform t
+                :initarg :dir-listing
+                :documentation "When nil, directory contents is not shown."
+                :reader get-dir-listing)
+   (filter :type string
            :initarg :filter
-	   :reader get-filter)
-   (filter-type :type t     ; t means show files that match the filter regexp
-		:initform t ; nil means hide files that match the filter regexp
-		:initarg :filter-type ; UPDATE: regexps can contain negation so filter-type is not really needed... Too lazy to remove it now.
+           :documentation "A regular expression."
+           :reader get-filter)
+   ;; UPDATE: regexps can contain negation so filter-type is not really needed... Too lazy to remove it now.
+   (filter-type :type t
+		:initform t
+		:initarg :filter-type
+                :documentation "T means show files that match the filter regexp. NIL means hide files that match the filter regexp"
 		:reader get-filter-type)))
 
 (defun make-route (&key

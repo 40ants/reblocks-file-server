@@ -1,2 +1,5 @@
+.qlot/
 /docs/build/
-/env/
+*~
+.#*
+.*.~undo-tree~
