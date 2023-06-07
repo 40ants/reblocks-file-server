@@ -14,6 +14,7 @@
                 #:serve)
   (:import-from #:routes
                 #:parse-template)
+  (:import-from #:cl-fad)
   (:import-from #:cl-ppcre)
   (:export #:make-route
            #:static-files-route
