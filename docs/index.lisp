@@ -78,7 +78,17 @@ You can install this library from Quicklisp, but you want to receive updates qui
                                    "40A"))
   "
 Here is a few examples on how this library can be used. These lines can be added into the code
-which starts your Reblocks web application before the call to REBLOCKS/SERVER:START function.
+which starts your Reblocks web application inside the `initialize-instance` method of your app:
+
+```lisp
+(defmethod initialize-instance ((app app) &rest args)
+  (declare (ignorable args))
+
+  (reblocks-file-server:make-route :root (asdf:system-relative-pathname \"ultralisp\"
+                                                                        \"images/\")
+                                   :uri \"/images/\")
+  (call-next-method))
+```
 
 This is how to serve all `*.txt` files from the `/var/www` folder:
 
