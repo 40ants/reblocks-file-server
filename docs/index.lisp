@@ -44,7 +44,8 @@
                                    "HTML"
                                    "Unlicense"
                                    "REPL"
-                                   "GIT"))
+                                   "GIT")
+                    :external-docs ("https://40ants.com/reblocks/"))
   (reblocks-file-server system)
   "
 [![](https://github-actions.40ants.com/40ants/reblocks-file-server/matrix.svg?only=ci.run-tests)](https://github.com/40ants/reblocks-file-server/actions)
@@ -77,7 +78,7 @@ You can install this library from Quicklisp, but you want to receive updates qui
                                    "40A"))
   "
 Here is a few examples on how this library can be used. These lines can be added into the code
-which starts your Reblocks web application.
+which starts your Reblocks web application before the call to REBLOCKS/SERVER:START function.
 
 This is how to serve all `*.txt` files from the `/var/www` folder:
 
