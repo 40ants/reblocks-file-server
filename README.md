@@ -80,7 +80,7 @@ In case if you want to serve all files except `*.txt`, you can negate filter exp
 
 <a id="x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FCORE-22-29-20PACKAGE-29"></a>
 
-#### [package](3b1a) `reblocks-file-server/core`
+#### [package](ca8a) `reblocks-file-server/core`
 
 <a id="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -92,35 +92,35 @@ In case if you want to serve all files except `*.txt`, you can negate filter exp
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-20CLASS-29"></a>
 
-###### [class](d625) `reblocks-file-server/core:static-files-route` (route)
+###### [class](f301) `reblocks-file-server/core:static-files-route` (route)
 
 **Readers**
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-DIR-LISTING-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29"></a>
 
-###### [reader](ac28) `reblocks-file-server/core:get-dir-listing` (static-files-route) (:dir-listing = t)
+###### [reader](23a2) `reblocks-file-server/core:get-dir-listing` (static-files-route) (:dir-listing = t)
 
 When nil, directory contents is not shown.
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29"></a>
 
-###### [reader](dee5) `reblocks-file-server/core:get-filter` (static-files-route) (:filter)
+###### [reader](6f04) `reblocks-file-server/core:get-filter` (static-files-route) (:filter)
 
 A regular expression.
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-TYPE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29"></a>
 
-###### [reader](f1f5) `reblocks-file-server/core:get-filter-type` (static-files-route) (:filter-type = t)
+###### [reader](13aa) `reblocks-file-server/core:get-filter-type` (static-files-route) (:filter-type = t)
 
 T means show files that match the filter regexp. `NIL` means hide files that match the filter regexp
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-ROOT-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29"></a>
 
-###### [reader](d20c) `reblocks-file-server/core:get-root` (static-files-route) (:root)
+###### [reader](b5aa) `reblocks-file-server/core:get-root` (static-files-route) (:root)
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-URI-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29"></a>
 
-###### [reader](b0cb) `reblocks-file-server/core:get-uri` (static-files-route) (:uri)
+###### [reader](4ead) `reblocks-file-server/core:get-uri` (static-files-route) (:uri)
 
 <a id="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FGenerics-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -128,31 +128,31 @@ T means show files that match the filter regexp. `NIL` means hide files that mat
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-404-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](0da3) `reblocks-file-server/core:render-404` route uri
+##### [generic-function](2546) `reblocks-file-server/core:render-404` route uri
 
 Returns a string with `HTML` for a case when `uri' wasn't found on the disk.
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-DIRECTORY-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](8c12) `reblocks-file-server/core:render-directory` route uri children
+##### [generic-function](df35) `reblocks-file-server/core:render-directory` route uri children
 
 Renders a list of files in a directory
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-STYLES-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](0f21) `reblocks-file-server/core:render-styles` route
+##### [generic-function](a050) `reblocks-file-server/core:render-styles` route
 
 This method should use reblocks/html:with-html and output a :style element.
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-DIRECTORY-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](8220) `reblocks-file-server/core:serve-directory` route uri full-path
+##### [generic-function](01b1) `reblocks-file-server/core:serve-directory` route uri full-path
 
 Returns a Lack response with a rendered directory listing.
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-FILE-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](7bed) `reblocks-file-server/core:serve-file` route full-path
+##### [generic-function](751e) `reblocks-file-server/core:serve-file` route full-path
 
 Returns content of the file.
 
@@ -162,33 +162,33 @@ Returns content of the file.
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3ALIST-DIRECTORY-20FUNCTION-29"></a>
 
-##### [function](3536) `reblocks-file-server/core:list-directory` full-path filter filter-type
+##### [function](c9a7) `reblocks-file-server/core:list-directory` full-path filter filter-type
 
 Returns a list of files in the directory.
 All items of the list are relative.
 
 <a id="x-28REBLOCKS-FILE-SERVER-2FCORE-3AMAKE-ROUTE-20FUNCTION-29"></a>
 
-##### [function](2707) `reblocks-file-server/core:make-route` &key (route-class 'static-files-route) (uri "/") (root "./") (dir-listing t) (filter ".\*") (filter-type t)
+##### [function](e5a3) `reblocks-file-server/core:make-route` &key (route-class 'static-files-route) (uri "/") (root "./") (dir-listing t) (filter ".\*") (filter-type t)
 
 
 [f449]: https://40ants.com/reblocks-file-server/
 [b09a]: https://github.com/40ants/reblocks-file-server
 [4729]: https://github.com/40ants/reblocks-file-server/actions
-[3b1a]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L1
-[3536]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L100
-[d625]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L35
-[d20c]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L36
-[b0cb]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L39
-[ac28]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L42
-[dee5]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L47
-[f1f5]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L52
-[2707]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L58
-[8220]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L80
-[7bed]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L84
-[8c12]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L88
-[0da3]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L92
-[0f21]: https://github.com/40ants/reblocks-file-server/blob/934285cca4e013653a4028a3abb6e1c579b36ae7/src/core.lisp#L96
+[ca8a]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L1
+[c9a7]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L100
+[f301]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L35
+[b5aa]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L36
+[4ead]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L39
+[23a2]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L42
+[6f04]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L47
+[13aa]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L52
+[e5a3]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L58
+[01b1]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L80
+[751e]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L84
+[df35]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L88
+[2546]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L92
+[a050]: https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L96
 [a450]: https://github.com/40ants/reblocks-file-server/issues
 [1059]: https://quickdocs.org/cl-fad
 [49b9]: https://quickdocs.org/cl-ppcre
