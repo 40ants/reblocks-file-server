@@ -1,0 +1,142 @@
+<html lang=en>
+ <head>
+  <meta charset=UTF-8><meta name=viewport
+      content="width=device-width, initial-scale=1">
+  <title>reblocks-file-server - A Reblocks extension allowing to create routes for 
+   serving static files from disk.</title>
+  <link rel=alternate
+        href=https://40ants.com/reblocks-file-server/changelog.xml
+        type=application/rss+xml>
+  <link rel=stylesheet type=text/css
+        href=theme.css>
+  <script type=text/javascript src=jquery.js></script>
+  <script type=text/javascript src=toc.js></script>
+  <link rel=stylesheet type=text/css
+        href=highlight.min.css>
+  <script type=text/javascript src=highlight.min.js></script>
+  <script type=text/javascript>hljs.highlightAll();</script>
+  <script type=text/javascript>
+             MathJax = {
+               tex: {
+                 inlineMath: [['$','$']],
+                 processEscapes: true
+               }
+             };
+        </script>
+  <script type=text/javascript
+          src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js></script>
+  <script type=text/javascript>$(document).ready(function() {$('a:has(img)').css('border-bottom', 'none')})</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FL71WXK73K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-FL71WXK73K');
+    </script>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(42462884, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/42462884" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+ </head>
+ <body>
+  <div class=page><a id=fork-me href=https://github.com/40ants/reblocks-file-server>Fork me on GitHub</a>
+   <div class=navbar>
+    <div class=navbar-inner>
+     <a class=brand href="/">
+      <img class=logo
+           src=https://40ants.com/img/logo.svg></a>
+     <ul class=nav>
+      <li><a href=/about.html>Who We Are</a>
+      <li><a href=https://gitter.im/40ants/team>Chat With Us</a>
+      <li><a href=/tips.html>Lisp Tips</a>
+      <li><a href=/projects.html>Our Projects</a>
+     </ul>
+    </div>
+   </div>
+   <input type=checkbox id=sidebar-check>
+   <label for=sidebar-check>
+    <div id=sidebar-trigger>
+     <span></span><span></span><span></span>
+    </div></label><div class=sidebar><div class=header><form class=search method=GET action="search/">
+      <input type=text name=q>
+      <input type=submit value=Search><span id=search-progress></span>
+     </form>
+    </div><div class=content><div class=page-toc><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">reblocks-file-server - A Reblocks extension allowing to create routes for serving static files from disk.</a></p><ul><li><p><a href="#reblocks-file-server-asdf-system-details" data-document="" data-node="reblocks-file-server-asdf-system-details">REBLOCKS-FILE-SERVER ASDF System Details</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Installation</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Usage</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">API</a></p><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">REBLOCKS-FILE-SERVER/CORE</a></p><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Classes</a></p><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24STATIC-FILES-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24STATIC-FILES-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">STATIC-FILES-ROUTE</a></p></li></ul></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FGenerics-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FGenerics-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Generics</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Functions</a></p></li></ul></li></ul></li></ul></li><li><p><a href="changelog/#x-28REBLOCKS-FILE-SERVER-DOCS-2FCHANGELOG-3A-40CHANGELOG-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="changelog/" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FCHANGELOG-3A-40CHANGELOG-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">ChangeLog</a></p></li></ul>
+     </div>
+    </div><div class=footer>
+     <a href=https://40ants.com/doc>[generated by 40ANTS-DOC]</a>
+    </div>
+   </div><div class=content role=main><h1>reblocks-file-server - A Reblocks extension allowing to create routes for serving static files from disk.<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h1><h2 id="reblocks-file-server-asdf-system-details">REBLOCKS-FILE-SERVER ASDF System Details</h2><ul><li><p>Description: A Reblocks extension allowing to create routes for serving static files from disk.</p></li><li><p>Licence: Unlicense</p></li><li><p>Author: Alexander Artemenko &lt;svetlyak.40wt@gmail.com&gt;</p></li><li><p>Homepage: <a href="https://40ants.com/reblocks-file-server/">https://40ants.com/reblocks-file-server/</a></p></li><li><p>Bug tracker: <a href="https://github.com/40ants/reblocks-file-server/issues">https://github.com/40ants/reblocks-file-server/issues</a></p></li><li><p>Source control: <a href="https://github.com/40ants/reblocks-file-server">GIT</a></p></li><li><p>Depends on: <a href="https://quickdocs.org/cl-fad">cl-fad</a>, <a href="https://quickdocs.org/cl-ppcre">cl-ppcre</a>, <a href="https://quickdocs.org/reblocks">reblocks</a>, <a href="https://quickdocs.org/routes">routes</a>, <a href="https://quickdocs.org/trivial-mimes">trivial-mimes</a></p></li></ul><p><a href="https://github.com/40ants/reblocks-file-server/actions"><img src="https://github-actions.40ants.com/40ants/reblocks-file-server/matrix.svg?only=ci.run-tests"/></a></p><p><img src="http://quickdocs.org/badge/reblocks-file-server.svg"/></p><h2>Installation<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h2><p>You can install this library from Quicklisp, but you want to receive updates quickly, then install it from Ultralisp.org:</p><pre><code class="">(ql-dist:install-dist &quot;http://dist.ultralisp.org/&quot;
+                      :prompt nil)
+(ql:quickload :reblocks-file-server)</code></pre><h2>Usage<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h2><p>Here is a few examples on how this library can be used. These lines can be added into the code
+which starts your Reblocks web application inside the <code>initialize-instance</code> method of your app:</p><pre><code class="lisp">(defmethod initialize-instance ((app app) &amp;rest args)
+  (declare (ignorable args))
+
+  (reblocks-file-server:make-route :root (asdf:system-relative-pathname &quot;ultralisp&quot;
+                                                                        &quot;images/&quot;)
+                                   :uri &quot;/images/&quot;)
+  (call-next-method))</code></pre><p>This is how to serve all <code>*.txt</code> files from the <code>/var/www</code> folder:</p><pre><code class="lisp">(reblocks-file-server:make-route :uri &quot;/static/&quot;
+                                 :root &quot;/var/www/&quot;
+                                 :dir-listing nil
+                                 :filter &quot;.*.txt&quot;)</code></pre><p>You also can provide a <code>DIR-LISTING</code> argument to repond on /static/ route with a rendered directory listing:</p><pre><code class="lisp">(reblocks-file-server:make-route :uri &quot;/static/&quot;
+                                 :root &quot;/var/www/&quot;
+                                 :dir-listing t
+                                 :filter &quot;.*.txt&quot;)</code></pre><p>In case if you want to serve all files except <code>*.txt</code>, you can negate filter expression by giving <code>NIL</code> in <code>FILTER-TYPE</code> argument:</p><pre><code class="lisp">(reblocks-file-server:make-route :uri &quot;/static/&quot;
+                                 :root &quot;/var/www/&quot;
+                                 :dir-listing t
+                                 :filter &quot;.*.txt&quot;
+                                 :filter-type nil)</code></pre><h2>API<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h2><h3>REBLOCKS-FILE-SERVER/CORE<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h3><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L1>package</a><div class=reference-object><div class=object-name><a href=#x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FCORE-22-29-20PACKAGE-29 id=x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FCORE-22-29-20PACKAGE-29>reblocks-file-server/core</a></div></div><a class=bullet-link href=#x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FCORE-22-29-20PACKAGE-29></a></div></div><h4>Classes<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h4><h5>STATIC-FILES-ROUTE<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24STATIC-FILES-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24STATIC-FILES-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h5><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L35>class</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-20CLASS-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-20CLASS-29>reblocks-file-server/core:static-files-route</a></div><div class=object-args><span class=locative-args></span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-20CLASS-29></a></div></div><p><b>Readers</b></p><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L42>reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-DIR-LISTING-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-DIR-LISTING-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29>reblocks-file-server/core:get-dir-listing</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:dir-listing = t)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-DIR-LISTING-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29></a></div><div class=bullet-content><p>When nil, directory contents is not shown.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L47>reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29>reblocks-file-server/core:get-filter</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:filter)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29></a></div><div class=bullet-content><p>A regular expression.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L52>reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-TYPE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-TYPE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29>reblocks-file-server/core:get-filter-type</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:filter-type = t)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-FILTER-TYPE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29></a></div><div class=bullet-content><p>T means show files that match the filter regexp. <code>NIL</code> means hide files that match the filter regexp</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L36>reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-ROOT-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-ROOT-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29>reblocks-file-server/core:get-root</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:root)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-ROOT-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29></a></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L39>reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-URI-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-URI-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29>reblocks-file-server/core:get-uri</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:uri)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-URI-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3ASTATIC-FILES-ROUTE-29-29></a></div></div><h4>Generics<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FGenerics-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FGenerics-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h4><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L92>generic-function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-404-20GENERIC-FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-404-20GENERIC-FUNCTION-29>reblocks-file-server/core:render-404</a></div><div class=object-args><span class=locative-args>route uri</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-404-20GENERIC-FUNCTION-29></a></div><div class=bullet-content><p>Returns a string with <code>HTML</code> for a case when `uri' wasn't found on the disk.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L88>generic-function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-DIRECTORY-20GENERIC-FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-DIRECTORY-20GENERIC-FUNCTION-29>reblocks-file-server/core:render-directory</a></div><div class=object-args><span class=locative-args>route uri children</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-DIRECTORY-20GENERIC-FUNCTION-29></a></div><div class=bullet-content><p>Renders a list of files in a directory</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L96>generic-function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-STYLES-20GENERIC-FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-STYLES-20GENERIC-FUNCTION-29>reblocks-file-server/core:render-styles</a></div><div class=object-args><span class=locative-args>route</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ARENDER-STYLES-20GENERIC-FUNCTION-29></a></div><div class=bullet-content><p>This method should use reblocks/html:with-html and output a :style element.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L80>generic-function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-DIRECTORY-20GENERIC-FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-DIRECTORY-20GENERIC-FUNCTION-29>reblocks-file-server/core:serve-directory</a></div><div class=object-args><span class=locative-args>route uri full-path</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-DIRECTORY-20GENERIC-FUNCTION-29></a></div><div class=bullet-content><p>Returns a Lack response with a rendered directory listing.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L84>generic-function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-FILE-20GENERIC-FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-FILE-20GENERIC-FUNCTION-29>reblocks-file-server/core:serve-file</a></div><div class=object-args><span class=locative-args>route full-path</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ASERVE-FILE-20GENERIC-FUNCTION-29></a></div><div class=bullet-content><p>Returns content of the file.</p></div></div><h4>Functions<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h4><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L100>function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ALIST-DIRECTORY-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ALIST-DIRECTORY-20FUNCTION-29>reblocks-file-server/core:list-directory</a></div><div class=object-args><span class=locative-args>full-path filter filter-type</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ALIST-DIRECTORY-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a list of files in the directory.
+All items of the list are relative.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href=https://github.com/40ants/reblocks-file-server/blob/cdb15070d5cefd171e868c593c5c510da1777dd6/src/core.lisp#L58>function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AMAKE-ROUTE-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AMAKE-ROUTE-20FUNCTION-29>reblocks-file-server/core:make-route</a></div><div class=object-args><span class=locative-args>&amp;key (route-class &#39;static-files-route) (uri &quot;/&quot;) (root &quot;./&quot;) (dir-listing t) (filter &quot;.\*&quot;) (filter-type t)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AMAKE-ROUTE-20FUNCTION-29></a></div></div>
+   </div><div class=footer>
+    <hr class=separator>
+    <p class=fineprint>Created with passion by <em>40Ants</em><a class=lisp-logo
+     href="http://lisp-lang.org/">
+      <img
+           src=https://40ants.com/img/made-with-lisp.svg></a>
+   </div>
+  </div>
+ </body>
+</html>
