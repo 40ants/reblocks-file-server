@@ -11,3 +11,6 @@
   :pathname "src"
   :depends-on ("reblocks-file-server/core")
   :in-order-to ((test-op (test-op "reblocks-file-server-tests"))))
+
+
+(asdf:register-system-packages "log4cl" '("LOG"))

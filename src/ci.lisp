@@ -6,7 +6,13 @@
   (:import-from #:40ants-ci/jobs/docs
                 #:build-docs)
   (:import-from #:40ants-ci/workflow
-                #:defworkflow))
+                #:defworkflow)
+  (:import-from #:40ants-ci/jobs/job
+                #:job)
+  (:import-from #:40ants-ci/steps/sh
+                #:sh)
+  (:import-from #:40ants-ci/steps/action
+                #:action))
 (in-package #:reblocks-file-server-ci/ci)
 
 
@@ -36,7 +42,5 @@
   :jobs ((run-tests
           :asdf-system "reblocks-file-server"
           :lisp ("sbcl-bin"
-                 ;; Issue https://github.com/roswell/roswell/issues/534
-                 ;; is still reproduces on 2023-02-06:
-                 "ccl-bin/1.12.0")
+                 "ccl-bin")
           :coverage t)))
