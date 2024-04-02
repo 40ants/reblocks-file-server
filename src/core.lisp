@@ -1,6 +1,7 @@
 (defpackage #:reblocks-file-server/core
   (:nicknames #:reblocks-file-server)
   (:use #:cl)
+  (:import-from #:log)
   (:import-from #:trivial-mimes)
   (:import-from #:reblocks/request)
   (:import-from #:reblocks/html
