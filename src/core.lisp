@@ -44,7 +44,6 @@
   (:import-from #:reblocks-ui2/card
                 #:card)
   (:export #:file-server-route
-           #:render-404
            #:list-directory
            #:get-dir-listing
            #:get-root
