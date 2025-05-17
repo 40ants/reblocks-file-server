@@ -2,6 +2,12 @@
 
 # ChangeLog
 
+<a id="x-28REBLOCKS-FILE-SERVER-DOCS-2FCHANGELOG-3A-3A-7C0-2E4-2E0-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+
+## 0.4.0 (2025-05-16)
+
+* Updated code to work with latest Reblocks and it's new routes subsystem.
+
 <a id="x-28REBLOCKS-FILE-SERVER-DOCS-2FCHANGELOG-3A-3A-7C0-2E3-2E0-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
 ## 0.3.0 (2023-06-07)
