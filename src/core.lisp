@@ -1,45 +1,62 @@
-(defpackage #:reblocks-file-server/core
+(uiop:define-package #:reblocks-file-server/core
   (:nicknames #:reblocks-file-server)
   (:use #:cl)
   (:import-from #:log)
-  (:import-from #:trivial-mimes)
+  (:import-from #:trivial-mimes
+                #:mime)
   (:import-from #:reblocks/request)
   (:import-from #:reblocks/html
-                #:with-html
-                #:with-html-string)
+                #:with-html)
   (:import-from #:reblocks/utils/misc
                 #:relative-path)
   (:import-from #:reblocks/routes
-                #:route
-                #:add-route
+                #:page-route
                 #:serve)
   (:import-from #:routes
                 #:parse-template)
   (:import-from #:cl-fad)
   (:import-from #:cl-ppcre)
-  (:export #:make-route
-           #:static-files-route
-           #:serve-file
-           #:serve-directory
-           #:render-directory
-           #:render-404
-           #:render-styles
+  (:import-from #:40ants-routes/route
+                #:current-route
+                #:route)
+  (:import-from #:40ants-routes/matched-route
+                #:original-route
+                #:matched-route-p)
+  (:import-from #:serapeum
+                #:fmt
+                #:->)
+  (:import-from #:reblocks-ui2/widget
+                #:render
+                #:defwidget
+                #:ui-widget)
+  (:import-from #:reblocks-ui2/themes/tailwind
+                #:tailwind-theme)
+  (:import-from #:str
+                #:starts-with-p
+                #:ensure-prefix)
+  (:import-from #:reblocks-ui2/tables/table
+                #:column)
+  (:import-from #:reblocks-ui2/html
+                #:html)
+  (:import-from #:local-time
+                #:format-timestring
+                #:universal-to-timestamp)
+  (:import-from #:reblocks-ui2/card
+                #:card)
+  (:export #:file-server-route
            #:list-directory
            #:get-dir-listing
-           #:get-filter
-           #:get-filter-type
            #:get-root
-           #:get-uri))
-(in-package reblocks-file-server/core)
+           #:file-server
+           #:filename-filter))
+(in-package #:reblocks-file-server/core)
 
 
-(defclass static-files-route (route)
+
+(defclass file-server-route (page-route)
   ((root :type pathname
          :initarg :root
          :reader get-root)
-   (uri :type pathname
-        :initarg :uri
-        :reader get-uri)
    (dir-listing :type t
                 :initform t
                 :initarg :dir-listing
@@ -47,206 +64,211 @@
                 :reader get-dir-listing)
    (filter :type string
            :initarg :filter
-           :documentation "A regular expression."
-           :reader get-filter)
-   ;; UPDATE: regexps can contain negation so filter-type is not really needed... Too lazy to remove it now.
-   (filter-type :type t
-		:initform t
-		:initarg :filter-type
-                :documentation "T means show files that match the filter regexp. NIL means hide files that match the filter regexp"
-		:reader get-filter-type)))
+           :initform ""
+           :documentation "A regular expression to show only selected files."
+           :reader filename-filter)))
 
-(defun make-route (&key
-                     (route-class 'static-files-route)
-                     (uri "/")
-                     (root "./")
-		     (dir-listing t)
-		     (filter ".*")
-		     (filter-type t))
+
+(defun file-server (uri-path
+                    &key
+                      name
+                      (route-class 'file-server-route)
+                      (root "./")
+		      (dir-listing t)
+		      (filter ".*"))
   (log:info "Making a route for serving files from a directory" root)
   (let* ((real-root (uiop:truename* root))
          (route (make-instance route-class
-                               :uri (pathname uri)
-                               :template (parse-template (concatenate 'string uri "*"))
+                               :name name
+                               :pattern (40ants-routes/url-pattern:parse-url-pattern
+                                         (format nil "~A<.*:path>"
+                                                 (str:ensure-suffix "/"
+                                                                    uri-path)))
+                               :handler #'file-server-handler
                                :root (or real-root
                                          (error "Directory ~S does not exist."
                                                 root))
 	                       :dir-listing dir-listing
-			       :filter filter
-			       :filter-type filter-type)))
-    (add-route route)
+			       :filter filter)))
     (values route)))
 
 
-(defgeneric serve-directory (route uri full-path)
-  (:documentation "Returns a Lack response with a rendered directory listing."))
+(defwidget directory-widget (ui-widget)
+  ((path :initarg :path
+         :type string
+         :documentation "A path extracted from current URL."
+         :reader directory-widget-path)
+   (full-path :initarg :full-path
+              :type pathname
+              :documentation "Directory's pathname on the disk."
+              :reader directory-widget-full-path)
+   (filter :initarg :filter
+           :type string
+           :initform ""
+           :documentation "Regex filter to show only entries matched by the filter.."
+           :reader directory-widget-filter)))
 
 
-(defgeneric serve-file (route full-path)
-  (:documentation "Returns content of the file."))
+(defwidget file-widget (ui-widget)
+  ((path :initarg :path
+         :type string
+         :documentation "A path extracted from current URL."
+         :reader file-widget-path)
+   (full-path :initarg :full-path
+              :type pathname
+              :documentation "File's pathname on the disk."
+              :reader file-widget-full-path)))
 
 
-(defgeneric render-directory (route uri children)
-  (:documentation "Renders a list of files in a directory"))
+(defwidget file-not-found-widget (ui-widget)
+  ((path :initarg :path
+         :type string
+         :documentation "A path extracted from current URL."
+         :reader file-not-found-path)))
 
 
-(defgeneric render-404 (route uri)
-  (:documentation "Returns a string with HTML for a case when `uri' wasn't found on the disk."))
-
-
-(defgeneric render-styles (route)
-  (:documentation "This method should use reblocks/html:with-html and output a :style element."))
-
-
-(defun list-directory (full-path filter filter-type)
+(defun list-directory (full-path filter)
   "Returns a list of files in the directory.
    All items of the list are relative."
   (loop for file in (cl-fad:list-directory full-path)
         for relative-file = (relative-path file full-path)
 	for filtered-p = (ppcre:scan filter (namestring file))
-	if (or (and filtered-p filter-type)
-               (and (null filtered-p)
-		    (null filter-type)))
-        collect relative-file))
+	if filtered-p
+          collect relative-file))
 
 
-(defmethod render-styles ((route t))
-  (with-html
-    (:style
-     "
-.file-server-body {
-    margin-left: 100px;
-    margin-right: 100px;
-}
-.file-server-body ul.children {
-    padding-left: 1em;
-    list-style-position: inside;
-}
-"
-     )))
+(-> get-parent (pathname)
+    (values pathname &optional))
 
 
-(defmethod render-directory ((route t) uri children)
-  (let* ((route-root (get-uri route))
-         (parent-directory-uri
-           (unless (equal uri
-                          (princ-to-string route-root))
-             (cl-fad:pathname-parent-directory uri))))
-    (with-html-string
-      (render-styles route)
-      
-      (:div :class "file-server-body"
-            (:h1 :class "current-directory"
-                 (princ-to-string uri))
-            (:ul :class "children"
-                 (when parent-directory-uri
-                   (:li :class "parent-directory"
-                        (:a :href parent-directory-uri
-                            "..")))
-                 (loop for relative-file in children
-                       for file-uri = (merge-pathnames relative-file uri)
-                       do (:li :class "file-or-directory"
-                               (:a :href (princ-to-string file-uri)
-                                   relative-file))))))))
+(defun get-parent (path)
+  "Returns the parent directory of the given PATH as a pathname.
+Returns NIL if the path does not have a parent directory (e.g., root)."
+  (let* ((dir (pathname-directory path))
+         (parent-dir (when (rest dir)   ; Check if there are components to remove
+                       (butlast dir))))
+    (when parent-dir
+      (make-pathname :directory parent-dir :defaults path))))
 
 
-(defmethod serve-directory ((route t) uri full-path)
-  (log:info "Serving directory" full-path)
-  
-  (let ((children (list-directory full-path (get-filter route) (get-filter-type route))))
-    (list 200
-          (list :content-type "text/html")
-          (list (render-directory route uri children)))))
+(defmethod render ((widget directory-widget) (theme tailwind-theme))
+  (let* ((path (directory-widget-path widget))
+         (show-parent-directory-uri-p (not (str:emptyp path)))
+         (children (list-directory (directory-widget-full-path widget)
+                                   (directory-widget-filter widget)))
+         (file-href-class "text-blue-600 dark:text-blue-400 hover:underline")
+         (columns (list
+                   (column "Filename"
+                           :align :left)
+                   (column "Created At"
+                           :align :right)))
+         (datetime-format
+           (append local-time:+iso-8601-date-format+
+                   (list #\Space)
+                   (butlast ;; we don't want to see dot and milliseconds
+                    (butlast
+                     local-time:+iso-8601-time-format+))))
+         (table-rows
+           (flet ((filename (filename)
+                    (html (:a :class file-href-class
+                              :href filename
+                            filename))))
+             (append
+              (when show-parent-directory-uri-p
+                (list
+                 (list (filename "..") 
+                       "")))
+              (loop for relative-file in children
+                    for full-path = (merge-pathnames relative-file
+                                                     (directory-widget-full-path widget))
+                    for created-at = (file-write-date full-path)
+                    collect (list (filename relative-file)
+                                  (format-timestring nil
+                                                     (universal-to-timestamp created-at)
+                                                     :format datetime-format)))))))
+    (with-html ()
+      (:div :class "flex flex-col gap-4 dark:bg-gray-900"
+            (:h1 :class "text-xl p-4 bg-gray-100 dark:bg-gray-800"
+                 (fmt "Directory ~S"
+                      (ensure-prefix "/"
+                                     path)))
+            
+            (render
+             (reblocks-ui2/tables/table:make-table columns table-rows)
+             theme)))))
 
 
-(defmethod render-404 ((route t) uri)
-  (with-html-string
-    (render-styles route)
+(defmethod render ((widget file-widget) (theme tailwind-theme))
+  (let* ((full-path (file-widget-full-path widget))
+         (content-type (mime full-path))
+         (text-content-p (starts-with-p "text/" content-type)))
+    (render
+     (card
+      (html ((cond
+               (text-content-p
+                (:pre
+                 (:code
+                  (:raw (uiop:read-file-string full-path)))))
+               (t
+                (:p (fmt "Unable to render file of type ~S"
+                         content-type))))))
+      :horizontal-align :left
+      :view :raised)
+     theme)))
+
+
+(defmethod render ((widget file-not-found-widget) (theme tailwind-theme))
+  (with-html ()
     (:div :class "file-server-body"
           (:h1 :class "file-not-found"
-               (format nil "File \"~A\" not found!"
-                       uri)))))
+               (fmt "File \"~A\" not found!"
+                    (file-not-found-path widget))))))
 
 
-(defmethod serve-file ((route t) full-path)
-  (log:info "Serving file" full-path)
-  
-  (let ((content-type (trivial-mimes:mime full-path)))
-    (list 200
-          (list :content-type content-type)
-          full-path)))
+(defun file-server-handler (&key path)
+  (let* ((route (progn
+                  (unless (matched-route-p (current-route))
+                    (error "Unexpected curren route type: ~S"
+                           (type-of (current-route))))
+                  (original-route (current-route))))
+	 (dir-listing (get-dir-listing route))
+         ;; A path to the file on the hard drive
+         (original-full-path
+           (merge-pathnames path
+                            (get-root route)))
+         ;; Here cl-fad will add a missing / if
+         ;; full-path is pointing to a directory but
+         ;; does not contains / on the end
+         (full-path (cl-fad:file-exists-p original-full-path))
+         (is-directory (when full-path
+                         (cl-fad:directory-pathname-p full-path)))
+         (not-exists-p (null full-path))
+	 filtered-p)
 
+    ;; For security reason we need to check
+    (when full-path
+      (setf filtered-p (ppcre:scan (filename-filter route)
+                                   (namestring full-path))))
 
-(defun make-full-path (root route-uri request-path)
-  "Returns a pathname pointing to the file on the filesystem.
+    
+    (cond ((or not-exists-p
+	       filtered-p
+	       (and is-directory
+                    (null dir-listing)))
+           (log:warn "File not found: ~A" path)
+           (reblocks/response:not-found-error
+            (make-instance 'file-not-found-widget
+                           :path path)))
+          (is-directory
+           (make-instance 'directory-widget
+                          :path path
+                          :full-path full-path
+                          :filter (filename-filter route)))
+          (t
+           (make-instance 'file-widget
+                          :path path
+                          :full-path full-path)))))
 
-   Root, is a base directory of the route, route-uri is a path
-   on the webserver, where files should be served from
-   and request-path is a requested path from the webrowser.
-   Request-path is always have a route-uri as a prefix.
-
-   For example, if:
-
-   root = \"/app/build/dist/\"
-   route-uri = \"/dist/\"
-   request-path = \"/dist/the-file.txt\"
-
-   Then this function should return a pathname
-   pointing to \"/app/build/dist/the-file.txt\""
-
-  (let* ((relative (relative-path request-path route-uri))
-         (new-path (merge-pathnames relative root)))
-    new-path))
-
-
-(defmethod serve ((route static-files-route) env)
-  "Returns a robots of the site."
-  (declare (ignorable env))
-  
-  (restart-case
-      (let* ((uri (reblocks/request:get-path))
-	     (dir-listing (get-dir-listing route))
-	     (filter-type (get-filter-type route))
-             ;; A path to the file on the hard drive
-             (original-full-path (make-full-path (get-root route)
-                                                 (get-uri route)
-                                                 uri))
-             ;; Here cl-fad will add a missing / if
-             ;; full-path is pointing to a directory but
-             ;; does not contains / on the end
-             (full-path (cl-fad:file-exists-p original-full-path))
-             (is-directory (when full-path
-                             (cl-fad:directory-pathname-p full-path)))
-             (not-exists-p (null full-path))
-	     filtered-p)
-
-	(when full-path
-	  (setf filtered-p (ppcre:scan (get-filter route) (namestring full-path))))
-
-	(cond ((or not-exists-p
-		   (and is-directory (null dir-listing))
-		   (and (not is-directory)
-			(not (or (and filtered-p filter-type)
-			         (and (null filtered-p)
-				      (null filter-type))))))
-               (log:warn "File not found: ~A" uri)
-	       (list 404
-                     (list :content-type "text/html")
-                     (list (render-404 route uri))))
-              (is-directory
-               (serve-directory route
-                                uri
-                                full-path))
-              (t
-               (serve-file route full-path))))
-    (abort ()
-      :report "Ignore error and return HTTP 500"
-      (log:error "Unhandled error")
-
-      (list 500
-            (list :content-type "text/html")
-            ;; Use method to render an Error page
-            (list "Unhandled error")))))
 
 #|
 example:
