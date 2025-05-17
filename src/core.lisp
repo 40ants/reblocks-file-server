@@ -6,8 +6,7 @@
                 #:mime)
   (:import-from #:reblocks/request)
   (:import-from #:reblocks/html
-                #:with-html
-                #:with-html-string)
+                #:with-html)
   (:import-from #:reblocks/utils/misc
                 #:relative-path)
   (:import-from #:reblocks/routes
@@ -188,7 +187,7 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
                                   (format-timestring nil
                                                      (universal-to-timestamp created-at)
                                                      :format datetime-format)))))))
-    (with-html
+    (with-html ()
       (:div :class "flex flex-col gap-4 dark:bg-gray-900"
             (:h1 :class "text-xl p-4 bg-gray-100 dark:bg-gray-800"
                  (fmt "Directory ~S"
@@ -220,7 +219,7 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
 
 
 (defmethod render ((widget file-not-found-widget) (theme tailwind-theme))
-  (with-html
+  (with-html ()
     (:div :class "file-server-body"
           (:h1 :class "file-not-found"
                (fmt "File \"~A\" not found!"
