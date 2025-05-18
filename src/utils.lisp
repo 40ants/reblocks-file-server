@@ -11,14 +11,20 @@
 
 
 ;; Because of this error:
+;; 
 ;; > Function types are not a legal argument to TYPEP
+;; 
 ;; we can not use this type definition in the compose-filters
-;; function type declaration:
+;; function type declaration.
+;; 
+;; More information about why it is impossible to
+;; allow runtime typechecks for functions is here:
+;; https://stackoverflow.com/questions/58927489/is-it-possible-to-check-get-function-type-or-its-signature-at-runtime-in-sbcl-co
 (deftype filter-function ()
   '(function (pathname)
     (values (member :allow :deny nil))))
 
-
+;; This fails at least on CCL:
 ;; (-> compose-filters ((soft-list-of filter-function))
 ;;     (values filter-function &optional))
 
