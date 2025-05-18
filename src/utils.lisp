@@ -43,9 +43,18 @@
     #'composite-filter))
 
 
-(-> allow (pathname &rest pathname)
-    (values filter-function
-            &optional))
+
+(-> ensure-has-directory (pathname)
+    (values pathname &optional))
+
+
+(defun ensure-has-directory (pathname)
+  (cond
+    ((pathname-directory pathname)
+     pathname)
+    (t
+     (merge-pathnames pathname
+                      (make-pathname :directory '(:relative))))))
 
 
 (-> match-pathnames (pathname (soft-list-of pathname) (member :allow :deny))
@@ -54,21 +63,29 @@
 
 
 (defun match-pathnames (pathname pathname-templates value-to-return)
-  (loop for template-pathname in pathname-templates
+  (loop with pathname = (ensure-has-directory pathname)
+        for template-pathname in pathname-templates
         when (and (not (and (null (pathname-name template-pathname))
                             ;; We don't want pathname like foo/bar/test.lisp to be matched to
                             ;; wildcards like **/
                             (pathname-name pathname)))
                   (pathname-match-p pathname template-pathname))
-          do (return value-to-return)))
+        do (return value-to-return)))
 
+
+(-> allow (pathname &rest pathname)
+    (values filter-function
+            &optional))
 
 (defun allow (pathname &rest more-pathnames)
   "Returns a function of one argument which will check this argument against given pathnames and if there is match, returns :allow."
-  (flet ((allow-pathname (f)
-           (match-pathnames f (list* pathname more-pathnames)
-                            :allow)))
-    #'allow-pathname))
+  (let ((pathname-templates
+          (mapcar #'ensure-has-directory
+                  (list* pathname more-pathnames))))
+    (flet ((allow-pathname (f)
+             (match-pathnames f pathname-templates
+                              :allow)))
+      #'allow-pathname)))
 
 
 (-> deny (pathname &rest pathname)
@@ -77,10 +94,13 @@
 
 (defun deny (pathname &rest more-pathnames)
   "Returns a function of one argument which will check this argument against given pathnames and if there is match, returns :deny."
-  (flet ((allow-pathname (f)
-           (match-pathnames f (list* pathname more-pathnames)
-                            :deny)))
-    #'allow-pathname))
+  (let ((pathname-templates
+          (mapcar #'ensure-has-directory
+                  (list* pathname more-pathnames))))
+    (flet ((deny-pathname (f)
+             (match-pathnames f pathname-templates
+                              :deny)))
+      #'deny-pathname)))
 
 
 

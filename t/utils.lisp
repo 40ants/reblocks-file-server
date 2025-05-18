@@ -13,18 +13,31 @@
 
 
 (deftest test-allow-func ()
+  (testing "Current directory"
+    ;; This filter should allow match only on files in the
+    ;; current directory
+    (ok (eql (funcall (allow #P"*.txt")
+                      #P"bar.txt")
+             :allow))
+    (ok (eql (funcall (allow #P"**.txt")
+                      #P"bar.txt")
+             :allow))
+    ;; Thus here it should return NIL
+    (ok (null (funcall (allow #P"*.txt")
+                       #P"foo/bar.txt")))
+    ;; Here we has two wildcards but both in the filename
+    (ok (null (funcall (allow #P"**.txt")
+                       #P"foo/bar.txt"))))
+  
   (testing "One path" 
     (ok (eql (funcall (allow #P"foo/bar.txt")
-                      #P"foo/bar.txt")
-             :allow))
-    (ok (eql (funcall (allow #P"*.txt")
                       #P"foo/bar.txt")
              :allow))
     (ok (eql (funcall (allow #P"foo/*.txt")
                       #P"foo/bar.txt")
              :allow))
     (ok (null (funcall (allow #P"bar/*.txt")
-                      #P"foo/bar.txt")))
+                       #P"foo/bar.txt")))
     (ok (null (funcall (allow #P"foo/*.lisp")
                        #P"foo/bar.txt"))))
 
@@ -36,18 +49,19 @@
              :allow)))
   
   (testing "Nested dirs"
-    (ok (eql (funcall (allow #P"*.lisp")
-                      #P"src/foo/bar.lisp")
-             :allow))
-    (ok (eql (funcall (allow #P"**.lisp")
-                      #P"src/foo/bar.lisp")
-             :allow))
+    ;; This pattern matches only on lisp files in current dir:
+    (ok (null (funcall (allow #P"*.lisp")
+                       #P"src/foo/bar.lisp")))
+    ;; This one too, because **.lisp has wildcards only in the filename not in the directory name:
+    (ok (null (funcall (allow #P"**.lisp")
+                       #P"src/foo/bar.lisp")))
+    
     (ok (eql (funcall (allow #P"**/*.lisp")
                       #P"src/foo/bar.lisp")
              :allow))
 
     (ok (null (funcall (allow #P"*.lisp")
-                      #P"src/foo/bar.txt")))
+                       #P"src/foo/bar.txt")))
     (ok (null (funcall (allow #P"**.lisp")
                        #P"src/foo/bar.txt")))
     (ok (null (funcall (allow #P"**/*.lisp")
@@ -55,7 +69,7 @@
 
   (testing "Allow directories"
     (ok (null (funcall (allow #P"**/")
-                      #P"src/foo/bar.lisp")))
+                       #P"src/foo/bar.lisp")))
     (ok (eql (funcall (allow #P"**/")
                       #P"src/foo/")
              :allow))
@@ -103,7 +117,14 @@
                       #P"foo/bar.fasl")
              :deny))
     (ok (null (funcall (deny #P"foo/*.fasl")
-                       #P"foo/bar.lisp")))))
+                       #P"foo/bar.lisp"))))
+  
+  (testing "Partial matching"
+    (ok (null (funcall (deny #P"src/f*.lisp")
+                       #P"src/bar.lisp")))
+    (ok (eql (funcall (deny #P"src/f*.lisp")
+                      #P"src/forms.lisp")
+             :deny))))
 
 
 (deftest test-combined-filter
@@ -111,7 +132,8 @@
                  (list
                   (deny #P"main.lisp")
                   (allow #P"**/" ;; Allow to show any directory
-                         #P"*.lisp"
+                         ;; And any lisp file in any directory
+                         #P"**/*.lisp"
                          #P"favicons/*.png"
                          #P"favicons/*.ico")
                   ;; deny-all
