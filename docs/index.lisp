@@ -114,8 +114,7 @@ In case if you want to serve all files except `*.txt`, you can negate filter exp
 (reblocks-file-server:make-route :uri \"/static/\"
                                  :root \"/var/www/\"
                                  :dir-listing t
-                                 :filter \".*.txt\"
-                                 :filter-type nil)
+                                 :filter \".*.txt\")
 ```
 
 ")

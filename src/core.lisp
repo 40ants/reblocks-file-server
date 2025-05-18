@@ -23,6 +23,7 @@
                 #:original-route
                 #:matched-route-p)
   (:import-from #:serapeum
+                #:soft-list-of
                 #:fmt
                 #:->)
   (:import-from #:reblocks-ui2/widget
@@ -43,6 +44,11 @@
                 #:universal-to-timestamp)
   (:import-from #:reblocks-ui2/card
                 #:card)
+  (:import-from #:reblocks-file-server/utils
+                #:filter-function
+                #:compose-filters)
+  (:import-from #:alexandria
+                #:last-elt)
   (:export #:file-server-route
            #:list-directory
            #:get-dir-listing
@@ -57,25 +63,47 @@
   ((root :type pathname
          :initarg :root
          :reader get-root)
-   (dir-listing :type t
+   (dir-listing :type boolean
                 :initform t
                 :initarg :dir-listing
                 :documentation "When nil, directory contents is not shown."
                 :reader get-dir-listing)
-   (filter :type string
+   (directories-first-p :type boolean
+                        :initform t
+                        :initarg :directories-first-p
+                        :reader directories-first-p)
+   (filter :type filter-function
            :initarg :filter
-           :initform ""
+           :initform (lambda (pathname)
+                       (declare (ignore pathname))
+                       t)
            :documentation "A regular expression to show only selected files."
            :reader filename-filter)))
+
+
+(-> file-server (string
+                 &key
+                 (:name string)
+                 (:route-class symbol)
+                 (:root pathname)
+                 (:dir-listing boolean)
+                 (:filter (or filter-function
+                              (soft-list-of filter-function))))
+    (values file-server-route &optional))
 
 
 (defun file-server (uri-path
                     &key
                       name
                       (route-class 'file-server-route)
-                      (root "./")
+                      (root (uiop:ensure-directory-pathname
+                             *default-pathname-defaults*))
 		      (dir-listing t)
-		      (filter ".*"))
+		      (filter nil))
+  "Returns a FILE-SERVER-ROUTE object suitable for including into Reblocks routes hierarchy.
+
+   FILTER argument should be a NIL or a list of filter functions which accept a pathname
+   and return :ALLOW :DENY or NIL."
   (log:info "Making a route for serving files from a directory" root)
   (let* ((real-root (uiop:truename* root))
          (route (make-instance route-class
@@ -89,29 +117,39 @@
                                          (error "Directory ~S does not exist."
                                                 root))
 	                       :dir-listing dir-listing
-			       :filter filter)))
+			       :filter (compose-filters (uiop:ensure-list filter)))))
     (values route)))
 
 
 (defwidget directory-widget (ui-widget)
   ((path :initarg :path
-         :type string
+         :type pathname
          :documentation "A path extracted from current URL."
          :reader directory-widget-path)
-   (full-path :initarg :full-path
-              :type pathname
-              :documentation "Directory's pathname on the disk."
-              :reader directory-widget-full-path)
+   (route-root-path :initarg :route-root-path
+                    :type pathname
+                    :documentation "An original path of the reblocks file server's route."
+                    :reader directory-widget-route-root-path)
+   (directory-relative-path :initarg :directory-relative-path
+                            :type pathname
+                            :documentation "Path of the current directory relative to the `route-root-path`."
+                            :reader directory-widget-directory-relative-path)
+   (directories-first-p :type boolean
+                        :initform t
+                        :initarg :directories-first-p
+                        :reader directories-first-p)
    (filter :initarg :filter
-           :type string
-           :initform ""
+           :type function
+           :initform (lambda (f)
+                       (declare (ignore f))
+                       t)
            :documentation "Regex filter to show only entries matched by the filter.."
            :reader directory-widget-filter)))
 
 
 (defwidget file-widget (ui-widget)
   ((path :initarg :path
-         :type string
+         :type pathname
          :documentation "A path extracted from current URL."
          :reader file-widget-path)
    (full-path :initarg :full-path
@@ -127,14 +165,57 @@
          :reader file-not-found-path)))
 
 
-(defun list-directory (full-path filter)
+(-> sort-pathnames-dirs-first (pathname pathname)
+    (values boolean &optional))
+
+
+(defun sort-pathnames-dirs-first (left right)
+  (let ((left-name (pathname-name left))
+        (right-name (pathname-name right)))
+    (cond
+      ((and (null left-name)
+            (null right-name))
+       (let ((left-dir-name (last-elt (pathname-directory left)))
+             (right-dir-name (last-elt (pathname-directory right))))
+         (when (string< left-dir-name
+                        right-dir-name)
+           t)))
+      ((and (null left-name)
+            right-name)
+       t)
+      ((and left-name
+            (null right-name))
+       nil)
+      ((and left-name
+            right-name)
+       (when (string< left-name
+                      right-name)
+         t)))))
+
+
+(defun list-directory (route-path directory-relative-path filter &key directories-first-p)
   "Returns a list of files in the directory.
    All items of the list are relative."
-  (loop for file in (cl-fad:list-directory full-path)
-        for relative-file = (relative-path file full-path)
-	for filtered-p = (ppcre:scan filter (namestring file))
-	if filtered-p
-          collect relative-file))
+  (loop with full-path = (merge-pathnames directory-relative-path route-path)
+        for file in (cl-fad:list-directory full-path)
+        ;; Here we get a path relative to the route's path,
+        ;; because filter function is defined to
+        ;; work with paths relative to this root, and
+        ;; when user goes deeper we have to recalcuate
+        ;; current dir's content relative to the file-server-route's root:
+        for relative-file-to-filter = (relative-path file route-path)
+        ;; but we will collect a filename relative to the curren directory:
+        for relative-file-to-collect = (relative-path file full-path)
+	for allowed-p = (not (eql (funcall filter relative-file-to-filter)
+                                  :deny))
+	when allowed-p
+          collect relative-file-to-collect into results
+        finally (return (cond
+                          (directories-first-p
+                           (stable-sort results
+                                        #'sort-pathnames-dirs-first))
+                          (t
+                           results)))))
 
 
 (-> get-parent (pathname)
@@ -153,9 +234,14 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
 
 (defmethod render ((widget directory-widget) (theme tailwind-theme))
   (let* ((path (directory-widget-path widget))
-         (show-parent-directory-uri-p (not (str:emptyp path)))
-         (children (list-directory (directory-widget-full-path widget)
-                                   (directory-widget-filter widget)))
+         (show-parent-directory-uri-p (not (str:emptyp (namestring path))))
+         ;; The filter is designed to work with pathnames relative to
+         ;; the route's URL, that is why we need to pass
+         ;; a route-path and directory-relative paths separately:
+         (children (list-directory (directory-widget-route-root-path widget)
+                                   (directory-widget-directory-relative-path widget)
+                                   (directory-widget-filter widget)
+                                   :directories-first-p (directories-first-p widget)))
          (file-href-class "text-blue-600 dark:text-blue-400 hover:underline")
          (columns (list
                    (column "Filename"
@@ -170,17 +256,21 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
                      local-time:+iso-8601-time-format+))))
          (table-rows
            (flet ((filename (filename)
-                    (html (:a :class file-href-class
-                              :href filename
-                            filename))))
+                    (let ((filename-as-str (princ-to-string filename)))
+                      (html (:a :class file-href-class
+                                :href filename-as-str
+                              filename-as-str)))))
              (append
               (when show-parent-directory-uri-p
                 (list
                  (list (filename "..") 
                        "")))
-              (loop for relative-file in children
+              (loop with current-directory-path = (merge-pathnames
+                                                   (directory-widget-directory-relative-path widget)
+                                                   (directory-widget-route-root-path widget))
+                    for relative-file in children
                     for full-path = (merge-pathnames relative-file
-                                                     (directory-widget-full-path widget))
+                                                     current-directory-path)
                     for created-at = (file-write-date full-path)
                     collect (list (filename relative-file)
                                   (format-timestring nil
@@ -191,17 +281,26 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
             (:h1 :class "text-xl p-4 bg-gray-100 dark:bg-gray-800"
                  (fmt "Directory ~S"
                       (ensure-prefix "/"
-                                     path)))
+                                     (namestring path))))
             
             (render
              (reblocks-ui2/tables/table:make-table columns table-rows)
              theme)))))
 
 
+(defun image-to-base64 (path)
+  "Returns an image as base64 encoded string like this \"data:image/png;base64,iVBOR...\"."
+  (format nil
+          "data:image/png;base64,~A"
+          (base64:usb8-array-to-base64-string
+           (alexandria:read-file-into-byte-vector path))))
+
+
 (defmethod render ((widget file-widget) (theme tailwind-theme))
   (let* ((full-path (file-widget-full-path widget))
          (content-type (mime full-path))
-         (text-content-p (starts-with-p "text/" content-type)))
+         (text-content-p (starts-with-p "text/" content-type))
+         (image-content-p (starts-with-p "image/" content-type)))
     (render
      (card
       (html ((cond
@@ -209,6 +308,8 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
                 (:pre
                  (:code
                   (:raw (uiop:read-file-string full-path)))))
+               (image-content-p
+                (:img :src (image-to-base64 full-path)))
                (t
                 (:p (fmt "Unable to render file of type ~S"
                          content-type))))))
@@ -225,8 +326,16 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
                     (file-not-found-path widget))))))
 
 
+(-> file-server-handler (&key (:path string))
+    (values t &optional))
+
 (defun file-server-handler (&key path)
-  (let* ((route (progn
+  (let* ((path
+           ;; PATH argument is extracted from the URL
+           ;; and have / as delimiter. That is why
+           ;; it is better to parse it as a unix namestring:
+           (uiop:parse-unix-namestring path))
+         (route (progn
                   (unless (matched-route-p (current-route))
                     (error "Unexpected curren route type: ~S"
                            (type-of (current-route))))
@@ -242,19 +351,18 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
          (full-path (cl-fad:file-exists-p original-full-path))
          (is-directory (when full-path
                          (cl-fad:directory-pathname-p full-path)))
-         (not-exists-p (null full-path))
-	 filtered-p)
+         (exists-p full-path)
+         ;; For security reason we need to check if directory
+         ;; is allowed to be listed:
+	 (allowed-p (when full-path
+                      (and (not (eql (funcall (filename-filter route)
+                                              path)
+                                     :deny))
+                           (or (not is-directory)
+                               dir-listing)))))
 
-    ;; For security reason we need to check
-    (when full-path
-      (setf filtered-p (ppcre:scan (filename-filter route)
-                                   (namestring full-path))))
-
-    
-    (cond ((or not-exists-p
-	       filtered-p
-	       (and is-directory
-                    (null dir-listing)))
+    (cond ((or (not exists-p)
+	       (not allowed-p))
            (log:warn "File not found: ~A" path)
            (reblocks/response:not-found-error
             (make-instance 'file-not-found-widget
@@ -262,7 +370,12 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
           (is-directory
            (make-instance 'directory-widget
                           :path path
-                          :full-path full-path
+                          :route-root-path (get-root route)
+                          :directory-relative-path (relative-path full-path
+                                                                  (get-root route))
+                          :directories-first-p (directories-first-p route)
+                          ;; When rendering a directory we will
+                          ;; apply filter again:
                           :filter (filename-filter route)))
           (t
            (make-instance 'file-widget
