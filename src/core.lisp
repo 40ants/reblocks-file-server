@@ -54,7 +54,8 @@
            #:get-dir-listing
            #:get-root
            #:file-server
-           #:filename-filter))
+           #:filename-filter
+           #:directories-first-p))
 (in-package #:reblocks-file-server/core)
 
 
