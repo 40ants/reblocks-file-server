@@ -364,9 +364,10 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
     (cond ((or (not exists-p)
 	       (not allowed-p))
            (log:warn "File not found: ~A" path)
-           (reblocks/response:not-found-error
-            (make-instance 'file-not-found-widget
-                           :path path)))
+           (values ;; We need this to suppress linter's warning about function returning value
+            (reblocks/response:not-found-error
+             (make-instance 'file-not-found-widget
+                            :path path))))
           (is-directory
            (make-instance 'directory-widget
                           :path path
