@@ -10,12 +10,19 @@
 (in-package #:reblocks-file-server/utils)
 
 
+;; Because of this error:
+;; > Function types are not a legal argument to TYPEP
+;; we can not use this type definition in the compose-filters
+;; function type declaration:
 (deftype filter-function ()
   '(function (pathname)
     (values (member :allow :deny nil))))
 
 
-(-> compose-filters ((soft-list-of filter-function))
+;; (-> compose-filters ((soft-list-of filter-function))
+;;     (values filter-function &optional))
+
+(-> compose-filters ((soft-list-of function))
     (values filter-function &optional))
 
 (defun compose-filters (filters)
