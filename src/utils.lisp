@@ -6,7 +6,9 @@
   (:export #:allow
            #:deny
            #:filter-function
-           #:deny-all))
+           #:deny-all
+           #:deny-if
+           #:allow-if))
 (in-package #:reblocks-file-server/utils)
 
 
@@ -32,7 +34,7 @@
     (values filter-function &optional))
 
 (defun compose-filters (filters)
-  "Returns a function which calls each filter and returns T when the first of them returns T.
+  "Returns a function which calls each filter and returns :ALLOW or :DENY when the first of them returns it.
 
    All filters should be the same arity."
   (flet ((composite-filter (pathname)
@@ -73,12 +75,25 @@
         do (return value-to-return)))
 
 
+(-> allow-if (function)
+    (values filter-function
+            &optional))
+
+(defun allow-if (predicate)
+  "Returns a function of one argument which will check an argument against given predicate and if it returns T, returns :ALLOW."
+  (flet ((allow-if-func (f)
+           (when (funcall predicate
+                          (ensure-has-directory f))
+             :allow)))
+    #'allow-if-func))
+
+
 (-> allow (pathname &rest pathname)
     (values filter-function
             &optional))
 
 (defun allow (pathname &rest more-pathnames)
-  "Returns a function of one argument which will check this argument against given pathnames and if there is match, returns :allow."
+  "Returns a function of one argument which will check this argument against given pathnames and if there is match, returns :ALLOW."
   (let ((pathname-templates
           (mapcar #'ensure-has-directory
                   (list* pathname more-pathnames))))
@@ -93,7 +108,7 @@
             &optional))
 
 (defun deny (pathname &rest more-pathnames)
-  "Returns a function of one argument which will check this argument against given pathnames and if there is match, returns :deny."
+  "Returns a function of one argument which will check this argument against given pathnames and if there is match, returns :DENY."
   (let ((pathname-templates
           (mapcar #'ensure-has-directory
                   (list* pathname more-pathnames))))
@@ -102,6 +117,18 @@
                               :deny)))
       #'deny-pathname)))
 
+
+(-> deny-if (function)
+    (values filter-function
+            &optional))
+
+(defun deny-if (predicate)
+  "Returns a function of one argument which will check an argument against given predicate and if it returns T, returns :DENY."
+  (flet ((deny-if-func (f)
+           (when (funcall predicate
+                          (ensure-has-directory f))
+             :deny)))
+    #'deny-if-func))
 
 
 (-> deny-all ()

@@ -161,7 +161,7 @@
 
 (defwidget file-not-found-widget (ui-widget)
   ((path :initarg :path
-         :type string
+         :type pathname
          :documentation "A path extracted from current URL."
          :reader file-not-found-path)))
 
@@ -301,22 +301,28 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
   (let* ((full-path (file-widget-full-path widget))
          (content-type (mime full-path))
          (text-content-p (starts-with-p "text/" content-type))
-         (image-content-p (starts-with-p "image/" content-type)))
-    (render
-     (card
-      (html ((cond
-               (text-content-p
-                (:pre
-                 (:code
-                  (:raw (uiop:read-file-string full-path)))))
-               (image-content-p
-                (:img :src (image-to-base64 full-path)))
-               (t
-                (:p (fmt "Unable to render file of type ~S"
-                         content-type))))))
-      :horizontal-align :left
-      :view :raised)
-     theme)))
+         (image-content-p (starts-with-p "image/" content-type))
+         (file-title-widget
+           (html (:h1 :class "text-xl p-4 bg-gray-100 dark:bg-gray-800"
+                   (fmt "File ~S"
+                        (ensure-prefix "/"
+                                       (namestring (file-widget-path widget)))))))
+         (file-content-widget
+           (card
+            (html ((cond
+                     (text-content-p
+                      (:pre
+                       (:code
+                        (:raw (uiop:read-file-string full-path)))))
+                     (image-content-p
+                      (:img :src (image-to-base64 full-path)))
+                     (t
+                      (:p (fmt "Unable to render file of type ~S"
+                               content-type))))))
+            :horizontal-align :left
+            :view :raised)))
+    (render file-title-widget theme)
+    (render file-content-widget theme)))
 
 
 (defmethod render ((widget file-not-found-widget) (theme tailwind-theme))
