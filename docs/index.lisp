@@ -62,6 +62,7 @@
 "
   (@installation section)
   (@usage section)
+  (@filtering section)
   (@api section))
 
 
@@ -136,7 +137,7 @@ Here is a relatively complex example of filtering:
                       (deny-all)))
 ```
 
-Here we've used these helped functions provided by utils package:
+Here we've used these utils functions:
 
 - ALLOW
 - DENY
@@ -146,7 +147,7 @@ Read more about how filtering work in the @FILTERING section.
 """)
 
 
-(defsection @usage (:title "Filtering")
+(defsection @filtering (:title "Filtering")
   """
 FILTER argument of FILE-SERVER function accepts a function or a list of functions
 where each function should accept a pathname relative to the ROOT argument given
@@ -188,7 +189,7 @@ any directory and files with `lisp` extension:
 ```
 
 If you need some special filtering, then you can use ALLOW-IF or DENY-IF
-functions:
+functions. This is an example how to define a filter to hide empty directories:
 
 ```
 (deny-if (lambda (path)
