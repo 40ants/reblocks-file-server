@@ -15,6 +15,14 @@
                 #:docs-config)
   (:import-from #:40ants-doc/autodoc
                 #:defautodoc)
+  (:import-from #:REBLOCKS-FILE-SERVER/CORE
+                #:FILE-SERVER)
+  (:import-from #:REBLOCKS-FILE-SERVER/UTILS
+                #:DENY-ALL
+                #:DENY
+                #:ALLOW
+                #:ALLOW-IF
+                #:DENY-IF)
   (:export #:@index
            #:@readme
            #:@changelog))
@@ -76,49 +84,123 @@ You can install this library from Quicklisp, but you want to receive updates qui
                     :ignore-words ("ASDF:PACKAGE-INFERRED-SYSTEM"
                                    "ASDF"
                                    "40A"))
-  "
-Here is a few examples on how this library can be used. These lines can be added into the code
-which starts your Reblocks web application inside the `initialize-instance` method of your app:
+  """
+A small demo of what this library does:
+
+![](https://storage.yandexcloud.net/40ants-public/reblocks-file-server/reblocks-file-server.gif)
+
+Here is an example on how this library can be used. All you need is to add a results of call to
+FILE-SERVER function call to you Reblocks application's routes.
 
 ```lisp
-(defmethod initialize-instance ((app app) &rest args)
-  (declare (ignorable args))
-
-  (reblocks-file-server:make-route :root (asdf:system-relative-pathname \"ultralisp\"
-                                                                        \"images/\")
-                                   :uri \"/images/\")
-  (call-next-method))
+(defapp app
+  :prefix "/"
+  :routes ((page ("/" :name "index")
+             (make-landing-page))
+           
+           ;; On /documents/
+           (file-server "/sources/"
+                        :name "sources"
+                        :root (asdf:system-relative-pathname :my-app "./"))))
 ```
 
-This is how to serve all `*.txt` files from the `/var/www` folder:
+In this example, we will show sources of the `my-app` ASDF library starting
+from path `/sources/`, ie if user opens your site like https://example.com/sources/,
+he will see content of the directory returned by `(asdf:system-relative-pathname :my-app "./")`.
 
-```lisp
-(reblocks-file-server:make-route :uri \"/static/\"
-                                 :root \"/var/www/\"
-                                 :dir-listing nil
-                                 :filter \".*.txt\")
+By default, all files and directories are shown. If you want to hide something from user,
+you might provide a list of functions which accepts a pathname and returns :ALLOW :DENY or NIL.
+
+Here is a relatively complex example of filtering:
+
+```
+(file-server "/sources/"
+             :name "sources"
+             :root (asdf:system-relative-pathname :my-app "./")
+             :filter (list
+                                ;; This is how to hide a file inside the current
+                                ;; directory
+                      (deny #P"main.lisp")
+                      ;; Or inside some particular directory
+                      (deny #P"pages/*.fasl")
+                      ;; Also you might whitelist some directories
+                      ;; and files:
+                      (allow #P"**/" ;; Allow to show any directory
+                             #P"**/*.lisp"
+                             #P"favicons/*.png"
+                             #P"favicons/*.ico")
+                      ;; and then deny the rest.
+                      ;; 
+                      ;; We need this part because by default
+                      ;; all files are allowed:
+                      (deny-all)))
 ```
 
-You also can provide a DIR-LISTING argument to repond on /static/ route with a rendered directory listing:
+Here we've used these helped functions provided by utils package:
 
-```lisp
-(reblocks-file-server:make-route :uri \"/static/\"
-                                 :root \"/var/www/\"
-                                 :dir-listing t
-                                 :filter \".*.txt\")
+- ALLOW
+- DENY
+- DENY-ALL
+
+Read more about how filtering work in the @FILTERING section.
+""")
+
+
+(defsection @usage (:title "Filtering")
+  """
+FILTER argument of FILE-SERVER function accepts a function or a list of functions
+where each function should accept a pathname relative to the ROOT argument given
+to the FILE-SERVER function and return :ALLOW, :DENY or NIL.
+
+When function returns :ALLOW or :DENY, processing is stopped and user see either
+content or 404 error page. If filter function returns NIL, then other filter functions
+are checked.
+
+If no functions matched the current path, then reblocks file server consider it to
+be allowed. So we have a black-list mode as a default - if you want something to
+be denied - deny it!
+
+In this example we deny access to a `config.lisp` file and fasl files in all directories.
+All other files and directories will be allowed:
+
+```
+(list
+ (deny #P"config.lisp")
+ (deny #P"**/*.fasl"))
 ```
 
-In case if you want to serve all files except `*.txt`, you can negate filter expression by giving NIL in FILTER-TYPE argument:
+Here I've used DENY helper which accepts a template pathname and returns a function which
+checks given pathname to this template pathname.
 
-```lisp
-(reblocks-file-server:make-route :uri \"/static/\"
-                                 :root \"/var/www/\"
-                                 :dir-listing t
-                                 :filter \".*.txt\"
-                                 :filter-type nil)
+To switch to the white-list mode, you need to add a last rule which will deny access to
+any file or directory. Use DENY-ALL helper for this.
+
+In the next example we deny access to all files and directories but allow listing of
+any directory and files with `lisp` extension:
+
+```
+(list
+ (allow ;; Allow to show any directory
+        #P"**/"
+        ;; Allow any lisp file
+        #P"**/*.lisp")
+ (deny-all))
 ```
 
-")
+If you need some special filtering, then you can use ALLOW-IF or DENY-IF
+functions:
 
+```
+(deny-if (lambda (path)
+           (and
+            (cl-fad:directory-pathname-p path)
+            (uiop:emptyp
+             (cl-fad:list-directory
+              (merge-pathnames path
+                               (asdf:system-relative-pathname :my-app "./")))))))
+```
+
+"""
+  )
 
 (defautodoc @api (:system "reblocks-file-server"))

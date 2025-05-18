@@ -7,7 +7,8 @@
   :source-control (:git "https://github.com/40ants/reblocks-file-server")
   :bug-tracker "https://github.com/40ants/reblocks-file-server/issues"
   :pathname "t"
-  :depends-on ("reblocks-file-server-tests/core")
+  :depends-on ("reblocks-file-server-tests/core"
+               "reblocks-file-server-tests/utils")
   :perform (test-op (op c)
                     (unless (symbol-call :rove :run c)
                       (error "Tests failed"))))
