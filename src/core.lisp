@@ -36,6 +36,7 @@
                 #:starts-with-p
                 #:ensure-prefix)
   (:import-from #:reblocks-ui2/tables/table
+                #:make-table
                 #:column)
   (:import-from #:reblocks-ui2/html
                 #:html)
@@ -284,9 +285,7 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
                       (ensure-prefix "/"
                                      (namestring path))))
             
-            (render
-             (reblocks-ui2/tables/table:make-table columns table-rows)
-             theme)))))
+            (make-table columns table-rows)))))
 
 
 (defun image-to-base64 (path)
@@ -321,8 +320,11 @@ Returns NIL if the path does not have a parent directory (e.g., root)."
                                content-type))))))
             :horizontal-align :left
             :view :raised)))
-    (render file-title-widget theme)
-    (render file-content-widget theme)))
+    
+    (with-html ()
+      (:div :class "flex flex-col gap-4"
+            file-title-widget
+            file-content-widget))))
 
 
 (defmethod render ((widget file-not-found-widget) (theme tailwind-theme))

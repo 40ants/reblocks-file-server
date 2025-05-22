@@ -10,6 +10,8 @@
                               "REPL"
                               "CI"
                               "HTTP"))
+  (0.5.0 2025-05-23
+         "* Use implicit rendering of subwidget, supported by latest Reblocks.")
   (0.4.0 2025-05-16
          "* Updated code to work with latest Reblocks and it's new routes subsystem.")
   (0.3.0 2023-06-07
