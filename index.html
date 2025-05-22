@@ -1,0 +1,183 @@
+<html lang=en>
+ <head>
+  <meta charset=UTF-8><meta name=viewport
+      content="width=device-width, initial-scale=1">
+  <title>reblocks-file-server - A Reblocks extension allowing to create routes for 
+   serving static files from disk.</title>
+  <link rel=alternate
+        href="https://40ants.com/reblocks-file-server/changelog.xml"
+        type="application/rss+xml">
+  <link rel=stylesheet type="text/css"
+        href=theme.css>
+  <script type="text/javascript" src=jquery.js></script>
+  <script type="text/javascript" src=toc.js></script>
+  <script type="text/javascript">$(document).ready(function() {$('a:has(img)').css('border-bottom', 'none')})</script>
+  <link rel=stylesheet type="text/css"
+      href=highlight.min.css>
+  <script type="text/javascript"
+          src=highlight.min.js></script>
+  <script type="text/javascript">hljs.highlightAll();</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FL71WXK73K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-FL71WXK73K');
+    </script>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(42462884, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/42462884" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+ </head>
+ <body>
+  <div class=page><a id=fork-me href="https://github.com/40ants/reblocks-file-server">Fork me on 
+    GitHub</a>
+   <div class=navbar>
+    <div class=navbar-inner>
+     <a class=brand href="/">
+      <img class=logo
+           src="https://40ants.com/img/logo.svg"></a>
+     <ul class=nav>
+      <li><a href="/posts/">Blog</a>
+      <li><a href="/ru/posts/">Blog (RU)</a>
+      <li><a href="/tips/">Lisp Tips</a>
+      <li><a href="/projects/">Our Projects</a>
+      <li><a href="/about/">About</a>
+     </ul>
+    </div>
+   </div>
+   <input type=checkbox id=sidebar-check>
+   <label for=sidebar-check>
+    <div id=sidebar-trigger>
+     <span></span><span></span><span></span>
+    </div></label><div class=sidebar><div class=header><form class=search method=GET action="search/">
+      <input type=text name=q>
+      <input type=submit value=Search><span id=search-progress></span>
+     </form>
+    </div><div class=content><div class=page-toc><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">reblocks-file-server - A Reblocks extension allowing to create routes for serving static files from disk.</a></p><ul><li><p><a href="#reblocks-file-server-asdf-system-details" data-document="" data-node="reblocks-file-server-asdf-system-details">REBLOCKS-FILE-SERVER ASDF System Details</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Installation</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Usage</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40FILTERING-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40FILTERING-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Filtering</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">API</a></p><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">REBLOCKS-FILE-SERVER/CORE</a></p><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Classes</a></p><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24FILE-SERVER-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24FILE-SERVER-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">FILE-SERVER-ROUTE</a></p></li></ul></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Functions</a></p></li></ul></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FUTILS-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FUTILS-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">REBLOCKS-FILE-SERVER/UTILS</a></p><ul><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Functions</a></p></li><li><p><a href="#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FTypes-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FTypes-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">Types</a></p></li></ul></li></ul></li></ul></li><li><p><a href="changelog/#x-28REBLOCKS-FILE-SERVER-DOCS-2FCHANGELOG-3A-40CHANGELOG-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="changelog/" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FCHANGELOG-3A-40CHANGELOG-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29">ChangeLog</a></p></li></ul>
+     </div>
+    </div><div class=footer>
+     <a href="https://40ants.com/doc">[generated by 40ANTS-DOC]</a>
+    </div>
+   </div><div class=content role=main><h1>reblocks-file-server - A Reblocks extension allowing to create routes for serving static files from disk.<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-40INDEX-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h1><h2 id="reblocks-file-server-asdf-system-details">REBLOCKS-FILE-SERVER ASDF System Details</h2><ul><li><p>Description: A Reblocks extension allowing to create routes for serving static files from disk.</p></li><li><p>Licence: Unlicense</p></li><li><p>Author: Alexander Artemenko &lt;svetlyak.40wt@gmail.com&gt;</p></li><li><p>Homepage: <a href="https://40ants.com/reblocks-file-server/">https://40ants.com/reblocks-file-server/</a></p></li><li><p>Bug tracker: <a href="https://github.com/40ants/reblocks-file-server/issues">https://github.com/40ants/reblocks-file-server/issues</a></p></li><li><p>Source control: <a href="https://github.com/40ants/reblocks-file-server">GIT</a></p></li><li><p>Depends on: <a href="https://quickdocs.org/40ants-routes">40ants-routes</a>, <a href="https://quickdocs.org/alexandria">alexandria</a>, <a href="https://quickdocs.org/cl-fad">cl-fad</a>, <a href="https://quickdocs.org/cl-ppcre">cl-ppcre</a>, <a href="https://quickdocs.org/local-time">local-time</a>, <a href="https://quickdocs.org/log4cl">log4cl</a>, <a href="https://quickdocs.org/reblocks">reblocks</a>, <a href="https://quickdocs.org/reblocks-ui2">reblocks-ui2</a>, <a href="https://quickdocs.org/routes">routes</a>, <a href="https://quickdocs.org/serapeum">serapeum</a>, <a href="https://quickdocs.org/str">str</a>, <a href="https://quickdocs.org/trivial-mimes">trivial-mimes</a></p></li></ul><p><a href="https://github.com/40ants/reblocks-file-server/actions"><img src="https://github-actions.40ants.com/40ants/reblocks-file-server/matrix.svg?only=ci.run-tests"/></a></p><p><img src="http://quickdocs.org/badge/reblocks-file-server.svg"/></p><h2>Installation<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h2><p>You can install this library from Quicklisp, but you want to receive updates quickly, then install it from Ultralisp.org:</p><pre><code class="">(ql-dist:install-dist &quot;http://dist.ultralisp.org/&quot;
+                      :prompt nil)
+(ql:quickload :reblocks-file-server)</code></pre><h2>Usage<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h2><p>A small demo of what this library does:</p><p><img src="https://storage.yandexcloud.net/40ants-public/reblocks-file-server/reblocks-file-server.gif"/></p><p>Here is an example on how this library can be used. All you need is to add a results of call to
+<a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29"><code>file-server</code></a> function call to you Reblocks application's routes.</p><pre><code class="lisp">(defapp app
+  :prefix &quot;/&quot;
+  :routes ((page (&quot;/&quot; :name &quot;index&quot;)
+             (make-landing-page))
+           
+           ;; On /documents/
+           (file-server &quot;/sources/&quot;
+                        :name &quot;sources&quot;
+                        :root (asdf:system-relative-pathname :my-app &quot;./&quot;))))</code></pre><p>In this example, we will show sources of the <code>my-app</code> <code>ASDF</code> library starting
+from path <code>/sources/</code>, ie if user opens your site like https://example.com/sources/,
+he will see content of the directory returned by <code>(asdf:system-relative-pathname :my-app &quot;./&quot;)</code>.</p><p>By default, all files and directories are shown. If you want to hide something from user,
+you might provide a list of functions which accepts a pathname and returns <code>:ALLOW</code> <code>:DENY</code> or <code>NIL</code>.</p><p>Here is a relatively complex example of filtering:</p><pre><code class="">(file-server &quot;/sources/&quot;
+             :name &quot;sources&quot;
+             :root (asdf:system-relative-pathname :my-app &quot;./&quot;)
+             :filter (list
+                                ;; This is how to hide a file inside the current
+                                ;; directory
+                      (deny #P&quot;main.lisp&quot;)
+                      ;; Or inside some particular directory
+                      (deny #P&quot;pages/*.fasl&quot;)
+                      ;; Also you might whitelist some directories
+                      ;; and files:
+                      (allow #P&quot;**/&quot; ;; Allow to show any directory
+                             #P&quot;**/*.lisp&quot;
+                             #P&quot;favicons/*.png&quot;
+                             #P&quot;favicons/*.ico&quot;)
+                      ;; and then deny the rest.
+                      ;; 
+                      ;; We need this part because by default
+                      ;; all files are allowed:
+                      (deny-all)))</code></pre><p>Here we've used these utils functions:</p><ul><li><p><a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-20FUNCTION-29"><code>allow</code></a></p></li><li><p><a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-20FUNCTION-29"><code>deny</code></a></p></li><li><p><a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-ALL-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-ALL-20FUNCTION-29"><code>deny-all</code></a></p></li></ul><p>Read more about how filtering work in the <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40FILTERING-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40FILTERING-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"><code>Filtering</code></a> section.</p><h2>Filtering<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40FILTERING-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40FILTERING-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h2><p><code>FILTER</code> argument of <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29"><code>file-server</code></a> function accepts a function or a list of functions
+where each function should accept a pathname relative to the <code>ROOT</code> argument given
+to the <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29"><code>file-server</code></a> function and return <code>:ALLOW</code>, <code>:DENY</code> or <code>NIL</code>.</p><p>When function returns <code>:ALLOW</code> or <code>:DENY</code>, processing is stopped and user see either
+content or 404 error page. If filter function returns <code>NIL</code>, then other filter functions
+are checked.</p><p>If no functions matched the current path, then reblocks file server consider it to
+be allowed. So we have a black-list mode as a default - if you want something to
+be denied - deny it!</p><p>In this example we deny access to a <code>config.lisp</code> file and fasl files in all directories.
+All other files and directories will be allowed:</p><pre><code class="">(list
+ (deny #P&quot;config.lisp&quot;)
+ (deny #P&quot;**/*.fasl&quot;))</code></pre><p>Here I've used <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-20FUNCTION-29"><code>deny</code></a> helper which accepts a template pathname and returns a function which
+checks given pathname to this template pathname.</p><p>To switch to the white-list mode, you need to add a last rule which will deny access to
+any file or directory. Use <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-ALL-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-ALL-20FUNCTION-29"><code>deny-all</code></a> helper for this.</p><p>In the next example we deny access to all files and directories but allow listing of
+any directory and files with <code>lisp</code> extension:</p><pre><code class="">(list
+ (allow ;; Allow to show any directory
+        #P&quot;**/&quot;
+        ;; Allow any lisp file
+        #P&quot;**/*.lisp&quot;)
+ (deny-all))</code></pre><p>If you need some special filtering, then you can use <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-IF-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-IF-20FUNCTION-29"><code>allow-if</code></a> or <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-IF-20FUNCTION-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-IF-20FUNCTION-29"><code>deny-if</code></a>
+functions. This is an example how to define a filter to hide empty directories:</p><pre><code class="">(deny-if (lambda (path)
+           (and
+            (cl-fad:directory-pathname-p path)
+            (uiop:emptyp
+             (cl-fad:list-directory
+              (merge-pathnames path
+                               (asdf:system-relative-pathname :my-app &quot;./&quot;)))))))</code></pre><h2>API<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h2><h3>REBLOCKS-FILE-SERVER/CORE<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h3><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L1">package</a><div class=reference-object><div class=object-name><a href=#x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FCORE-22-29-20PACKAGE-29 id=x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FCORE-22-29-20PACKAGE-29>reblocks-file-server/core</a></div></div><a class=bullet-link href=#x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FCORE-22-29-20PACKAGE-29></a></div></div><h4>Classes<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h4><h5>FILE-SERVER-ROUTE<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24FILE-SERVER-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FCORE-24FILE-SERVER-ROUTE-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h5><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L64">class</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-20CLASS-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-20CLASS-29>reblocks-file-server/core:file-server-route</a></div><div class=object-args><span class=locative-args></span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-20CLASS-29></a></div></div><p><b>Readers</b></p><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L73">reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ADIRECTORIES-FIRST-P-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ADIRECTORIES-FIRST-P-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29>reblocks-file-server/core:directories-first-p</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:directories-first-p = t)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ADIRECTORIES-FIRST-P-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29></a></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L77">reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILENAME-FILTER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILENAME-FILTER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29>reblocks-file-server/core:filename-filter</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:filter = (lambda (pathname) (declare (ignore pathname)) t))</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILENAME-FILTER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29></a></div><div class=bullet-content><p>A regular expression to show only selected files.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L68">reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-DIR-LISTING-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-DIR-LISTING-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29>reblocks-file-server/core:get-dir-listing</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:dir-listing = t)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-DIR-LISTING-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29></a></div><div class=bullet-content><p>When nil, directory contents is not shown.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L65">reader</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-ROOT-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-ROOT-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29>reblocks-file-server/core:get-root</a></div><div class=object-args><span class=locative-args></span><span class=locative-args>(:root)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AGET-ROOT-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-20REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-29-29></a></div></div><h4>Functions<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FCORE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h4><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L97">function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29>reblocks-file-server/core:file-server</a></div><div class=object-args><span class=locative-args>uri-path &amp;key name (route-class &#39;file-server-route) (root (uiop/pathname:ensure-directory-pathname \*default-pathname-defaults\*)) (dir-listing t) (filter nil)</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a <a href="https://40ants.com/reblocks-file-server/#x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-20CLASS-29" data-document="https://40ants.com/reblocks-file-server/" data-node="x-28REBLOCKS-FILE-SERVER-2FCORE-3AFILE-SERVER-ROUTE-20CLASS-29"><code>file-server-route</code></a> object suitable for including into Reblocks routes hierarchy.</p><p><code>FILTER</code> argument should be a <code>NIL</code> or a list of filter functions which accept a pathname
+and return <code>:ALLOW</code> <code>:DENY</code> or <code>NIL</code>.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/core.lisp#L198">function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ALIST-DIRECTORY-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FCORE-3ALIST-DIRECTORY-20FUNCTION-29>reblocks-file-server/core:list-directory</a></div><div class=object-args><span class=locative-args>route-path directory-relative-path filter &amp;key directories-first-p</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FCORE-3ALIST-DIRECTORY-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a list of files in the directory.
+All items of the list are relative.</p></div></div><h3>REBLOCKS-FILE-SERVER/UTILS<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FUTILS-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-40REBLOCKS-FILE-SERVER-2FUTILS-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h3><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/utils.lisp#L1">package</a><div class=reference-object><div class=object-name><a href=#x-28-23A-28-2826-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FUTILS-22-29-20PACKAGE-29 id=x-28-23A-28-2826-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FUTILS-22-29-20PACKAGE-29>reblocks-file-server/utils</a></div></div><a class=bullet-link href=#x-28-23A-28-2826-29-20BASE-CHAR-20-2E-20-22REBLOCKS-FILE-SERVER-2FUTILS-22-29-20PACKAGE-29></a></div></div><h4>Functions<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h4><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/utils.lisp#L95">function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-20FUNCTION-29>reblocks-file-server/utils:allow</a></div><div class=object-args><span class=locative-args>pathname &amp;rest more-pathnames</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a function of one argument which will check this argument against given pathnames and if there is match, returns <code>:ALLOW</code>.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/utils.lisp#L82">function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-IF-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-IF-20FUNCTION-29>reblocks-file-server/utils:allow-if</a></div><div class=object-args><span class=locative-args>predicate</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AALLOW-IF-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a function of one argument which will check an argument against given predicate and if it returns T, returns <code>:ALLOW</code>.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/utils.lisp#L110">function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-20FUNCTION-29>reblocks-file-server/utils:deny</a></div><div class=object-args><span class=locative-args>pathname &amp;rest more-pathnames</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a function of one argument which will check this argument against given pathnames and if there is match, returns <code>:DENY</code>.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/utils.lisp#L138">function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-ALL-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-ALL-20FUNCTION-29>reblocks-file-server/utils:deny-all</a></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-ALL-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a function which will deny all files.</p></div></div><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/utils.lisp#L125">function</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-IF-20FUNCTION-29 id=x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-IF-20FUNCTION-29>reblocks-file-server/utils:deny-if</a></div><div class=object-args><span class=locative-args>predicate</span></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3ADENY-IF-20FUNCTION-29></a></div><div class=bullet-content><p>Returns a function of one argument which will check an argument against given predicate and if it returns T, returns <code>:DENY</code>.</p></div></div><h4>Types<a class=header-link
+     href=#x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FTypes-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
+     title="Permalink to this headline"
+     id=x-28REBLOCKS-FILE-SERVER-DOCS-2FINDEX-3A-3A-7C-40REBLOCKS-FILE-SERVER-2FUTILS-3FTypes-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29></a></h4><div class=reference-bullet><div class=reference-bullet-header><a class=locative-type href="https://github.com/40ants/reblocks-file-server/blob/3158815936a8540f90884dcdf75beffcbdd5e1ce/src/utils.lisp#L25">type</a><div class=reference-object><div class=object-name><a href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AFILTER-FUNCTION-20-28TYPE-29-29 id=x-28REBLOCKS-FILE-SERVER-2FUTILS-3AFILTER-FUNCTION-20-28TYPE-29-29>reblocks-file-server/utils:filter-function</a></div></div><a class=bullet-link href=#x-28REBLOCKS-FILE-SERVER-2FUTILS-3AFILTER-FUNCTION-20-28TYPE-29-29></a></div><div class=bullet-content><pre><code class="">(FUNCTION (PATHNAME) (VALUES (MEMBER :ALLOW :DENY NIL)))</code></pre></div></div>
+   </div><div class=footer>
+    <hr class=separator>
+    <p class=fineprint>Created with passion by <em>40Ants</em><a class=lisp-logo
+     href="http://lisp-lang.org/">
+      <img
+           src="https://40ants.com/img/made-with-lisp.svg"></a>
+   </div>
+  </div>
+ </body>
+</html>

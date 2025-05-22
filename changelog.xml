@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rss version="2.0">
+    <channel>
+        <title>reblocks-file-server-docs ChangeLog</title>
+        <link>https://40ants.com/reblocks-file-server/</link>
+        <generator>xml-emitter</generator>
+        <language>en-us</language>
+        <item>
+            <title>0.5.0  (2025-05-23)</title>
+            <description>&lt;ul&gt;&lt;li&gt;&lt;p&gt;Use implicit rendering of subwidget, supported by latest Reblocks.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Fri, 23 May 2025 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.4.0  (2025-05-16)</title>
+            <description>&lt;ul&gt;&lt;li&gt;&lt;p&gt;Updated code to work with latest Reblocks and it&apos;s new routes subsystem.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Fri, 16 May 2025 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.3.0  (2023-06-07)</title>
+            <description>&lt;ul&gt;&lt;li&gt;&lt;p&gt;Added documentation and &lt;code&gt;CI&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Wed, 07 Jun 2023 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.2.0  (2021-12-06)</title>
+            <description>&lt;ul&gt;&lt;li&gt;&lt;p&gt;Renamed to reblocks-file-server.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Mon, 06 Dec 2021 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.1.0  (2018-12-26)</title>
+            <description>&lt;ul&gt;&lt;li&gt;&lt;p&gt;Initial version.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Wed, 26 Dec 2018 00:00:00 +0000</pubDate>
+        </item>
+    </channel>
+</rss>
